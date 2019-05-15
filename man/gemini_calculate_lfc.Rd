@@ -4,8 +4,8 @@
 \alias{gemini_calculate_lfc}
 \title{Calculate log-fold change}
 \usage{
-gemini_calculate_lfc(Input, counts = "counts",
-  sample.column.name = "samplename", normalize = TRUE, CONSTANT = 32)
+gemini_calculate_lfc(Input, counts = "counts", sample.column.name = "samplename",
+normalize = TRUE, CONSTANT = 32)
 }
 \arguments{
 \item{Input}{a gemini.input object containing an object named \code{counts}.}
@@ -34,4 +34,14 @@ and used to compute log-fold change against any specified late time points.
 
 If a sample has a specific early-time point, these are matched as long as the sample names are identical between
 the early and late timepoints in \code{sample.column.name}
+}
+\examples{
+
+data("Input", package = "gemini")
+Input <- gemini_calculate_lfc(Input)
+
+\dontrun{
+head(Input$LFC)
+}
+
 }

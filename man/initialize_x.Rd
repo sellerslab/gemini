@@ -4,40 +4,25 @@
 \alias{initialize_x}
 \title{intialize_x}
 \usage{
-initialize_x(Model, Input, LFC = "LFC",
-  guide.pair.annot = "guide.pair.annot", concordance = 1,
-  pattern_split = ";", nc_gene, cores = 1, verbose = F)
+initialize_x(Model, concordance = 1, cores = 1, verbose = FALSE)
 }
 \arguments{
 \item{Model}{a Model object of class gemini.model}
 
-\item{Input}{an Input object of class gemini}
-
-\item{LFC}{an object within \code{Input} containing log-fold change values}
-
-\item{guide.pair.annot}{an object within \code{Input} mapping guide pairs to individual genes.  See details for format.}
-
 \item{concordance}{a numeric value to initialize x}
-
-\item{pattern_split}{a character to strsplit the guide combinations found in \code{guide.pair.annot}}
-
-\item{nc_gene}{a character naming the gene to use as a negative control}
 
 \item{cores}{a numeric indicating the number of cores to use.  See \code{\link[gemini]{gemini_parallel}} default 1.}
 
 \item{verbose}{default FALSE}
 }
 \value{
-a Model object of class gemini.model including new slots for x values
+a Model object of class gemini.model including new slots for x values and internal-use hashes
 }
 \description{
 Initialize all x values to the value of \code{concordance}
 }
-\details{
-guide.pair.annot must be (at least) of the following format:
-\itemize{
- \item 1st column contains guide pairs, joined by \code{pattern_split}.
- \item 2nd column contains the name of gene mapping to the first guide in the 1st column.
- \item 3rd column contains the name of gene mapping to the second guide in the 1st column.
-}
+\note{
+As there is much hashing involved in this function, this tends to be computationally intensive.
+As such, we have enabled parallelization of most hash steps, but this may still be rate-limited by the 
+amount of memory consumed.
 }

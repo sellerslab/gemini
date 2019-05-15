@@ -20,9 +20,14 @@
 #' @import mixtools
 #' @importFrom stats p.adjust
 #' @importFrom stats pnorm
+#' @importFrom stats quantile
 #' @importFrom utils capture.output
 #'
 #' @export
+#' 
+#' @examples
+#' data("Model", package = "gemini")
+#' Score <- gemini_score(Model, pc_gene = "EEF2")
 gemini_score <- function(Model,
 						 pc_gene = NA,
 						 pc_threshold = NULL,
@@ -36,11 +41,11 @@ gemini_score <- function(Model,
 	
 	###### Paired genes mapped to their corresponding Single genes
 	Pgenes2Sgenes <- lapply(rownames(Model$s), function(x) {
-		s <- strsplit(x, split = Model$pattern_join, fixed = T)[[1]]
+		s <- strsplit(x, split = Model$pattern_join, fixed = TRUE)[[1]]
 		data.frame(
 			gene1 = s[1],
 			gene2 = s[2],
-			stringsAsFactors = F
+			stringsAsFactors = FALSE
 		)
 	}) %>%
 		bind_rows() %>%
@@ -117,12 +122,12 @@ gemini_score <- function(Model,
 		
 		# strong: Score synergies accroding to Score = abs(sgh_mean) - max(abs(yg_mean),abs(yh_mean)
 		Score$strong[, i] <- abs(sgh_mean) - apply(cbind(abs(yg_mean), abs(yh_mean)), 1 , function(x)
-			max(x, na.rm = T)) %>%
+			max(x, na.rm = TRUE)) %>%
 			unlist() %>%
 			set_names(rownames(Model$s))
 		# lethality: Score synergies accroding to Score = min(yg_mean,yh_mean) - yg_mean - yh_mean - sgh_mean
 		Score$sensitive_lethality[, i] <- apply(cbind(yg_mean, yh_mean), 1 , function(x)
-			min(x, na.rm = T)) %>%
+			min(x, na.rm = TRUE)) %>%
 			unlist() %>%
 			set_names(rownames(Model$s)) %>%
 			subtract(sgh_mean) %>%
@@ -133,20 +138,20 @@ gemini_score <- function(Model,
 			add(yg_mean) %>%
 			add(yh_mean) %>%
 			subtract(apply(cbind(yg_mean, yh_mean), 1, function(x)
-				min(x, na.rm = T)) %>%
+				min(x, na.rm = TRUE)) %>%
 					unlist() %>%
 					set_names(rownames(Model$s)))
 		
 		# keep pairs if yg & yh > 0.5*ypc_gene
 		if (sum(!is.na(pc_gene)) > 0 & is.null(pc_threshold)) {
 			pc_gene <- pc_gene[!is.na(pc_gene)]
-			threshold <- median(Model$y[pc_gene, i], na.rm = T) * pc_weight
+			threshold <- median(Model$y[pc_gene, i], na.rm = TRUE) * pc_weight
 		} else if (sum(!is.na(pc_gene)) == 0 & !is.null(pc_threshold)) {
 			threshold <- pc_threshold
 		} else if (sum(!is.na(pc_gene)) > 0 & !is.null(pc_threshold)) {
 			warning("Both pc_gene and pc_threshold specified - defaulting to pc_gene.")
 			pc_gene <- pc_gene[!is.na(pc_gene)]
-			threshold <- median(Model$y[pc_gene, i], na.rm = T) * pc_weight
+			threshold <- median(Model$y[pc_gene, i], na.rm = TRUE) * pc_weight
 		}
 		else {
 			# If no threshold specified, use bottom 1-percentile of data

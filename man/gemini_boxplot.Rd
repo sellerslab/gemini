@@ -4,27 +4,25 @@
 \alias{gemini_boxplot}
 \title{gemini_boxplot}
 \usage{
-gemini_boxplot(Model, gene.column.names, g, h, nc_gene, sample,
-  show_inference = T, color_x = F, identify_guides = F)
+gemini_boxplot(Model, g, h, nc_gene = NULL, sample,
+  show_inference = TRUE, color_x = FALSE, identify_guides = FALSE)
 }
 \arguments{
 \item{Model}{a gemini.model object}
-
-\item{gene.column.names}{a character or integer vector of length(2) indicating which columns of \code{guide.annotation} describe the genes being targeted.}
 
 \item{g}{a character naming a gene to visualize}
 
 \item{h}{a character naming another gene to visualize}
 
-\item{nc_gene}{a character naming the gene to use as a negative control.}
+\item{nc_gene}{a character naming the gene to use as a negative control, to be paired with each individual g and h. Defaults to \code{Model$nc_gene}.}
 
 \item{sample}{a character naming the sample to visualize}
 
-\item{show_inference}{a logical indicating whether to show the inferred individual or combined values for each gene/gene pair (default T)}
+\item{show_inference}{a logical indicating whether to show the inferred individual or combined values for each gene/gene pair (default TRUE)}
 
-\item{color_x}{a logical indicating whether to visualize the sample-independent effects for each individual guide or guide pair (default F)}
+\item{color_x}{a logical indicating whether to visualize the sample-independent effects for each individual guide or guide pair (default FALSE)}
 
-\item{identify_guides}{a logical indicating whether to identify guides with unique colors and shapes (default F)}
+\item{identify_guides}{a logical indicating whether to identify guides with unique colors and shapes (default FALSE)}
 }
 \value{
 a ggplot2 object
@@ -35,7 +33,17 @@ A function to visualize the results of GEMINI over the raw data.
 \details{
 Raw LFC data is plotted for each gene combination (`g`-`nc_gene`, `h`-`nc_gene`, `g`-`h`) in a standard boxplot.
 Horizontal green line segments are plotted over the box plots indicating the individual gene effects or
-the inferred total effect of a particular gene combination. Each guide 
-pair can be colored based on the inferred sample independent effects 
+the inferred total effect of a particular gene combination. Each guide
+pair can be colored based on the inferred sample independent effects
 \eqn{g_i}, \eqn{h_j}, and \eqn{g_i,h_j}. Additionally, colors and shapes can be used to distinguish unique guides targeting gene g and h, respectively.
+}
+\examples{
+
+data("Model", package = "gemini")
+
+gemini_boxplot(Model, g = "BRCA2", h = "PARP1", nc_gene = "CD81", 
+sample = "A549", show_inference = TRUE,
+color_x = FALSE, identify_guides = FALSE)
+
+
 }

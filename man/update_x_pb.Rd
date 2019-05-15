@@ -4,19 +4,11 @@
 \alias{update_x_pb}
 \title{update_x_p}
 \usage{
-update_x_pb(Model, Input, LFC = "LFC",
-  guide.pair.annot = "guide.pair.annot", mean_x = 1, sd_x = 1,
-  mean_xx = 1, sd_xx = 1, nc_gene, pattern_join = ";", cores = 1,
-  verbose = F)
+update_x_pb(Model, mean_x = 1, sd_x = 1, mean_xx = 1, sd_xx = 1,
+  cores = 1, verbose = FALSE)
 }
 \arguments{
 \item{Model}{a Model object of class gemini.model}
-
-\item{Input}{an Input object of class gemini.input}
-
-\item{LFC}{an object within \code{Input} containing log-fold change values}
-
-\item{guide.pair.annot}{an object within \code{Input} mapping guide pairs to individual genes.}
 
 \item{mean_x}{a numeric indicating prior mean of x}
 
@@ -25,10 +17,6 @@ update_x_pb(Model, Input, LFC = "LFC",
 \item{mean_xx}{a numeric indicating prior mean of xx}
 
 \item{sd_xx}{a numeric indicating prior sd of xx}
-
-\item{nc_gene}{a character naming the gene to use as a negative control}
-
-\item{pattern_join}{a character to join the gene combinations found in \code{guide.pair.annot}}
 
 \item{cores}{a numeric indicating the number of cores to use.  See \code{\link{gemini_parallel}} for details.  (default=1).}
 
@@ -39,4 +27,12 @@ An object of class gemini.model
 }
 \description{
 Update values of x using data from \code{Input} and current values of other parameters.
+}
+\note{
+The structure of the screen may impede parallelization. Our ability to parallelize the updates is 
+contingent upon the independence between guides in position 1 and 2.
+To account for potential dependence, we define three groups of guides: group 1 (guides only in position 1
+), group 2 (guides only in position 2), and group 3 (guides in both position 1 and position 2). 
+Parallelization is possible for groups 1 and 2, but only serial updates are possible for group 3. 
+As such, updates for this group will take longer.
 }

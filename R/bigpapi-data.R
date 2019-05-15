@@ -25,3 +25,19 @@
 #' @docType data
 #' @keywords data
 "sample.replicate.annotation"
+
+#' Input object from Big Papi
+#'
+#' @name Input
+#' @description A gemini.input object created from the Big Papi data.
+#' @docType data
+#' @keywords data
+"Input"
+
+#' Model object from Big Papi
+#'
+#' @name Input
+#' @description A gemini.model object created from the Big Papi data, after CAVI.
+#' @docType data
+#' @keywords data
+"Model"

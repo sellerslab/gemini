@@ -6,7 +6,7 @@
 \usage{
 gemini_inference(Model, n_iterations = 20, mean_x = 1, sd_x = 1,
   mean_xx = 1, sd_xx = 1, mean_y = 0, sd_y = 10, mean_s = 0,
-  sd_s = 10, threshold = 0.001, cores = 1, force_results = F,
+  sd_s = 10, threshold = 0.001, cores = 1, force_results = FALSE,
   verbose = FALSE, save_iterations = FALSE)
 }
 \arguments{
@@ -59,4 +59,10 @@ GEMINI uses the following parameters, which are described in Zamanighomi et al. 
 
 Default parameters may need to be changed if convergence is not achieved. See README for
 more details.
+}
+\examples{
+data("Model", package = "gemini")
+Model <- gemini_initialize(Input, nc_gene = "CD81")
+Model \%<>\% gemini_inference(verbose = FALSE, n_iterations = 1)
+
 }

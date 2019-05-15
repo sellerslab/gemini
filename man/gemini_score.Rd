@@ -29,3 +29,7 @@ strong interactions and sensitive lethality and recovery, and if \code{nc_pairs}
 Score genetic interactions from a gemini.model and produce a gemini.score object, and generate p-values and FDRs if negative control
 pairs (\code{nc_pairs}) are available.
 }
+\examples{
+data("Model", package = "gemini")
+Score <- gemini_score(Model, pc_gene = "EEF2")
+}

@@ -25,6 +25,18 @@
 #' }
 #'
 #' @importFrom dplyr mutate
+#' 
+#' @examples
+#' data("counts", package = "gemini")
+#' data("sample.replicate.annotation", package = "gemini")
+#' data("guide.annotation", package = "gemini")
+#' Input <- gemini_create_input(
+#'     counts.matrix = counts,
+#'     sample.replicate.annotation = sample.replicate.annotation,
+#'     guide.annotation = guide.annotation,
+#'     sample.column.name = "samplename",
+#'     gene.column.names = c("U6.gene", "H1.gene")
+#' )
 #'
 #' @export
 gemini_create_input <-
@@ -32,18 +44,18 @@ gemini_create_input <-
 			 sample.replicate.annotation = NULL,
 			 guide.annotation = NULL,
 			 samplesAreColumns = TRUE,
-			 sample.column.name = NULL,
+			 sample.column.name = "samplename",
 			 gene.column.names = NULL,
 			 ETP.column = 1,
 			 LTP.column = NULL,
-			 verbose = F) {
+			 verbose = FALSE) {
 		
 	  # Check ETP/LTP column identification
 	  if(is.numeric(ETP.column) & is.null(LTP.column)){
-	    LTP.column <- (1:ncol(counts.matrix))[-ETP.column]
+	    LTP.column <- seq(from = 1, to = ncol(counts.matrix))[-ETP.column]
 	  }else if(is.character(ETP.column) & is.null(LTP.column)){
 	    ETP.column <- which(colnames(counts.matrix) %in% ETP.column)
-	    LTP.column <- (1:ncol(counts.matrix))[-ETP.column]
+	    LTP.column <- seq(from = 1, to = ncol(counts.matrix))[-ETP.column]
 	  }
 	  
 		# Require dimension names for counts matrix if no guide and replicate annotations provided
@@ -67,12 +79,12 @@ gemini_create_input <-
 		# default guide annotations to rownames of counts matrix
 		gannot <-
 			data.frame(rowname = rownames(counts.matrix),
-					   stringsAsFactors = F)
+					   stringsAsFactors = FALSE)
 		
 		# Default sample annotations to column names of counts matrix, ordering by ETP -> LTP
 		sannot <-
 			data.frame(colname = colnames(counts.matrix)[c(ETP.column, LTP.column)],
-					   stringsAsFactors = F, row.names = 1:length(c(ETP.column, LTP.column))) %>%
+					   stringsAsFactors = FALSE, row.names = seq(from = 1, to = length(c(ETP.column, LTP.column)))) %>%
 			dplyr::mutate(TP = c(rep("ETP", length(ETP.column)), rep("LTP", length(LTP.column))))
 		
 		# Merge existing sample annotations with colnames, ensuring formatting and matching names
@@ -84,7 +96,7 @@ gemini_create_input <-
 			if(!length(i) > 0){
 			  if(verbose) message("No columns found in sample.replicate.annotation which completely match colnames of counts.matrix...")
 			}
-			sannot <- merge(sannot, sample.replicate.annotation, by.x = 1, by.y = i[1], no.dups = F, all = F, sort = F, suffixes = c("", ".y"))
+			sannot <- merge(sannot, sample.replicate.annotation, by.x = 1, by.y = i[1], no.dups = FALSE, all = FALSE, sort = FALSE, suffixes = c("", ".y"))
 		}else{
 			stop("Could not determine samplename.  Please add sample/replicate annotation and specify and sample.column.name.  See ?gemini_create_input.")
 		}
@@ -97,7 +109,7 @@ gemini_create_input <-
 			if(!length(i) > 0){
 			  if(verbose) message("No columns found in guide.annotation which completely match rownames()...")
 			}
-			gannot <- merge(gannot, guide.annotation, by.x = 1, by.y = i, no.dups = F, all = F, sort = F, suffixes = c("", ".y"))
+			gannot <- merge(gannot, guide.annotation, by.x = 1, by.y = i, no.dups = FALSE, all = FALSE, sort = FALSE, suffixes = c("", ".y"))
 		}else{
 			stop("Could not determine gene/guide data.  Please add guide annotation and specify and gene.column.names. See ?gemini_create_input.")
 		}
@@ -105,13 +117,13 @@ gemini_create_input <-
 		# Create new Input object
 		Output <- list(
 			counts = data.matrix(counts.matrix[, c(ETP.column, LTP.column)]),
-			replicate.map = as.data.frame(sannot, optional = T, row.names = 1:nrow(sannot)),
-			guide.pair.annot = as.data.frame(gannot, optional = T, rownames = 1:nrow(gannot))
+			replicate.map = as.data.frame(sannot, optional = TRUE, row.names = seq(from = 1, to = nrow(sannot))),
+			guide.pair.annot = as.data.frame(gannot, optional = TRUE, rownames = seq(from = 1, to = nrow(gannot)))
 		)
 		
 		Output <- gemini_prepare_input(Output, gene.columns = gene.column.names)
 		
-		class(Output) <- c(class(Output), "gemini.input")
+		class(Output) <- union(class(Output), "gemini.input")
 		if(verbose) message("Created gemini input object.")
 		return(Output)
 	}

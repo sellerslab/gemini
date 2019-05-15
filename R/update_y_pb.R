@@ -2,28 +2,21 @@
 #' @description Update values of y using data from \code{Input} and current values of other parameters.
 #'
 #' @param Model a Model object of class gemini.model
-#' @param Input an Input object of class gemini.input
-#' @param LFC an object within \code{Input} containing log-fold change values
-#' @param guide.pair.annot an object within \code{Input} mapping guide pairs to individual genes.
 #' @param mean_y numeric indicating prior mean of y
 #' @param sd_y numeric indicating prior sd of y
-#' @param nc_gene a character naming the gene to use as a negative control
-#' @param pattern_join a character to join the gene combinations found in \code{guide.pair.annot}
 #' @param verbose default FALSE
 #'
 #' @return An object of class gemini.model
 #'
 #' @import pbmcapply
+#' @importFrom stats setNames
+#' @importFrom utils getTxtProgressBar
+#' @importFrom utils setTxtProgressBar
 #' @export
 update_y_pb <- function(Model,
-						Input,
-						LFC = "LFC",
-						guide.pair.annot = "guide.pair.annot",
 						mean_y = 0,
 						sd_y = 10,
-						nc_gene,
-						pattern_join = ';',
-						verbose = F) {
+						verbose = FALSE) {
 	if (verbose) {
 		message("Updating y...")
 		message("\tUsing 1 core (serial).")
@@ -31,73 +24,75 @@ update_y_pb <- function(Model,
 		pb <- progressBar(min = 1, max = length(rownames(Model$y)))
 	}
 	
-	LFC <- Input[[LFC]]
-	guide2gene <- Input[[guide.pair.annot]]
+	Input <- Model$Input
+	LFC <- Input[[Model$LFC.name]]
+	guide2gene <- Input[[Model$guide.pair.annot]]
 	
 	# genes corresponding to x_seq1
-	x_seq1_genes = Model$hashes_x$gene_hash1
-	
-	# genes corresponding to x_seq2
-	x_seq2_genes = Model$hashes_x$gene_hash2
-	
+	x_seq_genes = Model$hashes_x$gene_hash
+
 	# mean of gamma distribution
 	tau = Model$alpha / Model$beta
 	
 	# update y
-	for (i in rownames(Model$y)) {
-		gi_seq1 = names(x_seq1_genes)[x_seq1_genes == i]
-		gi_seq2 = names(x_seq2_genes)[x_seq2_genes == i]
-		gi_seq1_hj = lapply(gi_seq1, function(x)
-			unlist(Model$hashes_x$hash1[x])) %>% set_names(gi_seq1)
-		gi_seq2_hj = lapply(gi_seq2, function(x)
-			unlist(Model$hashes_x$hash2[x])) %>% set_names(gi_seq2)
+	for (g in rownames(Model$y)) {
+		gi_seq = names(x_seq_genes)[x_seq_genes == g]
+		gi_seq_hj = lapply(gi_seq, function(x)
+			unlist(Model$hashes_x$hash[x])) %>% set_names(gi_seq)
 		
-		# calculating updates for each x_seq1
-		numerator = numeric(ncol(LFC)) %>% setNames(colnames(LFC))
-		denominator = numeric(ncol(LFC)) %>% setNames(colnames(LFC))
-		for (j in gi_seq1) {
-			ind_nc = guide2gene[match(gi_seq1_hj[[j]], guide2gene[, 1]), 3] %in% nc_gene
-			hj = Model$hashes_x$paired_guide[gi_seq1_hj[[j]], 2][!ind_nc]
-			h = x_seq2_genes[hj]
-			gh = apply(cbind(rep(i, length(h)), h), 1, function(x)
-				paste(sort(x), collapse = pattern_join)) # gene g paired with genes h
-			# numerator for each x_seq1
-			numerator_seq1 = LFC[gi_seq1_hj[[j]][!ind_nc], ] - Model$x_seq2[hj] *
-				Model$y[h, ] - Model$xx[gi_seq1_hj[[j]][!ind_nc]] * Model$s[gh, ]
-			numerator_seq1 = (Model$x_seq1[j] * tau[gi_seq1_hj[[j]][!ind_nc], ]) *
-				numerator_seq1
-			numerator_seq1 = colSums(as.matrix(numerator_seq1), na.rm = T)
-			numerator_seq1_nc = (Model$x_seq1[j] * tau[gi_seq1_hj[[j]][ind_nc], ]) *
-				LFC[gi_seq1_hj[[j]][ind_nc], ]
-			numerator_seq1_nc = colSums(as.matrix(numerator_seq1_nc), na.rm = T)
-			numerator_seq1 = numerator_seq1 + numerator_seq1_nc
-			numerator = numerator_seq1 + numerator
-			# denominator for each x_seq1
-			denominator_seq1 = colSums(as.matrix(Model$x2_seq1[j] * tau[gi_seq1_hj[[j]], ]), na.rm = T)
-			denominator = denominator_seq1 + denominator
-		}
+		# calculating updates for each x_seq
+		numerator = denominator = numeric(ncol(LFC)) %>% setNames(colnames(LFC))
 		
-		# calculating updates for each x_seq2
-		for (j in gi_seq2) {
-			ind_nc = guide2gene[match(gi_seq2_hj[[j]], guide2gene[, 1]), 2] %in% nc_gene
-			hj = Model$hashes_x$paired_guide[gi_seq2_hj[[j]], 1][!ind_nc]
-			h = x_seq1_genes[hj]
-			gh = apply(cbind(rep(i, length(h)), h), 1, function(x)
-				paste(sort(x), collapse = pattern_join)) # gene g paired with genes h
-			# numerator for each x_seq2
-			numerator_seq2 = LFC[gi_seq2_hj[[j]][!ind_nc], ] - Model$x_seq1[hj] *
-				Model$y[h, ] - Model$xx[gi_seq2_hj[[j]][!ind_nc]] * Model$s[gh, ]
-			numerator_seq2 = (Model$x_seq2[j] * tau[gi_seq2_hj[[j]][!ind_nc], ]) *
-				numerator_seq2
-			numerator_seq2 = colSums(as.matrix(numerator_seq2), na.rm = T)
-			numerator_seq2_nc = (Model$x_seq2[j] * tau[gi_seq2_hj[[j]][ind_nc], ]) *
-				LFC[gi_seq2_hj[[j]][ind_nc], ]
-			numerator_seq2_nc = colSums(as.matrix(numerator_seq2_nc), na.rm = T)
-			numerator_seq2 = numerator_seq2 + numerator_seq2_nc
-			numerator = numerator_seq2 + numerator
-			# denominator for each x_seq2
-			denominator_seq2 = colSums(as.matrix(Model$x2_seq2[j] * tau[gi_seq2_hj[[j]], ]), na.rm = T)
-			denominator = denominator_seq2 + denominator
+		for (i in gi_seq) {
+			# identify which position the partner gene (h) is in
+			h.col <- vapply(gi_seq_hj[[i]], function(s){
+				ss = strsplit(s, split = Model$pattern_split, fixed = TRUE)[[1]]
+				return(which(ss != i))
+			}, numeric(1))
+			
+			# identify cases in which the partner gene is nc_gene
+			ind_nc = guide2gene[match(gi_seq_hj[[i]], guide2gene[, 1]), 3]
+			ind_nc[h.col==1] = guide2gene[match(gi_seq_hj[[i]], guide2gene[, 1]), 2][h.col==1]
+			ind_nc = ind_nc %in% Model$nc_gene
+			
+			# identify partner guides, filtering out nc_gene guides
+			hj = Model$hashes_x$paired_guide[gi_seq_hj[[i]], 2]
+			hj[h.col==1] = Model$hashes_x$paired_guide[gi_seq_hj[[i]], 1][h.col==1]
+			hj = hj[!ind_nc]
+			
+			# gene g paired with genes h
+			h = x_seq_genes[hj]
+			gh = apply(cbind(rep(g, length(h)), h), 1, function(x)
+				paste(sort(x), collapse = Model$pattern_join)) 
+			
+			# numerator for each guide i
+			numerator_i = LFC[gi_seq_hj[[i]][!ind_nc], ] - Model$x[hj] *
+				Model$y[h, ] - Model$xx[gi_seq_hj[[i]][!ind_nc]] * Model$s[gh, ]
+			numerator_i = (Model$x[i] * tau[gi_seq_hj[[i]][!ind_nc], ]) *
+				numerator_i
+			if (sum(!ind_nc)>1 | sum(!ind_nc)==0){
+				numerator_i = colSums(as.matrix(numerator_i), na.rm = TRUE)
+			} else{
+				numerator_i = colSums(as.matrix(t(numerator_i)), na.rm = TRUE)
+			}
+			numerator_nc_i = (Model$x[i] * tau[gi_seq_hj[[i]][ind_nc], ]) *
+				LFC[gi_seq_hj[[i]][ind_nc], ]
+			if (sum(ind_nc)>1 | sum(ind_nc)==0){
+				numerator_nc_i = colSums(as.matrix(numerator_nc_i), na.rm = TRUE)	
+			} else{
+				numerator_nc_i = colSums(as.matrix(t(numerator_nc_i)), na.rm = TRUE)	
+			}
+			numerator_i = numerator_i + numerator_nc_i
+			numerator = numerator_i + numerator
+			
+			# denominator for each guide i
+			if (length(gi_seq_hj[[i]])>1){
+				denominator_i = colSums(as.matrix(Model$x2[i] * tau[gi_seq_hj[[i]], ]), na.rm = TRUE)	
+			} else{
+				denominator_i = colSums(as.matrix(t(Model$x2[i] * tau[gi_seq_hj[[i]], ])), na.rm = TRUE)
+			}
+			#denominator_i = colSums(as.matrix(Model$x2[i] * tau[gi_seq_hj[[i]], ]), na.rm = TRUE)
+			denominator = denominator_i + denominator
 		}
 		
 		# update progress bar
@@ -109,8 +104,8 @@ update_y_pb <- function(Model,
 		denominator = 1 / (sd_y ^ 2) + denominator
 		
 		# updating y and y2
-		Model$y[i, ] = numerator / denominator
-		Model$y2[i, ] = Model$y[i, ] ^ 2 + 1 / denominator
+		Model$y[g, ] = numerator / denominator
+		Model$y2[g, ] = Model$y[g, ] ^ 2 + 1 / denominator
 	}
 	
 	

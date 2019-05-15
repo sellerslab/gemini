@@ -6,9 +6,10 @@
 \usage{
 gemini_initialize(Input, guide.pair.annot = "guide.pair.annot",
   replicate.map = "replicate.map", sample.column.name = "samplename",
-  nc_gene, CONSTANT = 32, concordance = 1, prior_shape = 0.5,
-  pattern_join = ";", pattern_split = ";", window = NULL,
-  monotonize = FALSE, verbose = F, cores = 1, save = NULL)
+  LFC.name = "LFC", nc_gene, CONSTANT = 32, concordance = 1,
+  prior_shape = 0.5, pattern_join = ";", pattern_split = ";",
+  window = NULL, monotonize = FALSE, verbose = FALSE, cores = 1,
+  save = NULL)
 }
 \arguments{
 \item{Input}{an object of class gemini.input}
@@ -20,22 +21,25 @@ gemini_initialize(Input, guide.pair.annot = "guide.pair.annot",
 
 \item{sample.column.name}{a character or integer indicating which column of \code{Input$replicate.map} describes the samples.}
 
-\item{nc_gene}{a character naming the gene to use as a negative control - REQUIRED}
+\item{LFC.name}{a character indicating an object within Input to treat as LFC. By default, "LFC" is used,
+which is the output of \code{\link[gemini]{gemini_calculate_lfc}}.}
+
+\item{nc_gene}{a character naming the gene to use as a negative control. See details for more.}
 
 \item{CONSTANT}{a numeric indicating a constant value that shifts counts to reduce outliers, see Details (default = 32).}
 
 \item{concordance}{a numeric value to initialize x (default = 1)}
 
-\item{prior_shape}{shape parameter of Gamma distribution used to model the variation in the 
+\item{prior_shape}{shape parameter of Gamma distribution used to model the variation in the
 data in \code{Input} (default = 0.5)}
 
-\item{pattern_join}{a character to join the gene combinations found in 
+\item{pattern_join}{a character to join the gene combinations found in
 \code{guide.pair.annot}. Default ';'}
 
-\item{pattern_split}{a character to split the guide combinations found in 
+\item{pattern_split}{a character to split the guide combinations found in
 \code{guide.pair.annot}. Default ';'}
 
-\item{window}{a numeric if window smoothing should be done on initialized tau values, 
+\item{window}{a numeric if window smoothing should be done on initialized tau values,
 otherwise NULL (default) for no window smoothing}
 
 \item{monotonize}{a logical specifying whether the variance should be monotonically increasing. (default FALSE)}
@@ -51,4 +55,23 @@ a Model object of class gemini.model
 }
 \description{
 Creates a gemini.model object given Input data and initialization parameters.
+}
+\details{
+guide.pair.annot is created with the following format:
+\itemize{
+ \item 1st column contains guide pairs, joined by \code{pattern_split}.
+ \item 2nd column contains the name of gene mapping to the first guide in the 1st column.
+ \item 3rd column contains the name of gene mapping to the second guide in the 1st column.
+}
+Additional columns may be appended to guide.pair.annot, but the first three columns must be defined as
+above.
+
+\strong{Use of negative control}{
+As described in Zamanighomi et al., it is highly recommended to specify a negative control. In the event that no negative control is specified, GEMINI will use the median LFC of all guide pairs targeting a gene to initialize that gene's effect. While this may be reasonable in large all-by-all screens, it is \strong{not recommended} in smaller screens or some-by-some screens. As a result, when possible, be sure to specify a negative control.
+}
+}
+\examples{
+data("Input", package = "gemini")
+Model <- gemini_initialize(Input, nc_gene = "CD81")
+
 }

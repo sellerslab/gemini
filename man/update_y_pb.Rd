@@ -4,26 +4,14 @@
 \alias{update_y_pb}
 \title{update_y_pb}
 \usage{
-update_y_pb(Model, Input, LFC = "LFC",
-  guide.pair.annot = "guide.pair.annot", mean_y = 0, sd_y = 10,
-  nc_gene, pattern_join = ";", verbose = F)
+update_y_pb(Model, mean_y = 0, sd_y = 10, verbose = FALSE)
 }
 \arguments{
 \item{Model}{a Model object of class gemini.model}
 
-\item{Input}{an Input object of class gemini.input}
-
-\item{LFC}{an object within \code{Input} containing log-fold change values}
-
-\item{guide.pair.annot}{an object within \code{Input} mapping guide pairs to individual genes.}
-
 \item{mean_y}{numeric indicating prior mean of y}
 
 \item{sd_y}{numeric indicating prior sd of y}
-
-\item{nc_gene}{a character naming the gene to use as a negative control}
-
-\item{pattern_join}{a character to join the gene combinations found in \code{guide.pair.annot}}
 
 \item{verbose}{default FALSE}
 }

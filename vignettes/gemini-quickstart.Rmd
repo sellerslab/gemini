@@ -9,30 +9,29 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-This is a tl;dr of the `GEMINI` manual, but should allow an experienced user to quickly begin to use the many features of `GEMINI`.
-
 GEMINI follows a basic workflow:
 
 - Create Input (`gemini_create_input`)
 - Initialize Model (`gemini_initialize`)
-- Perform Inference (`gemini_inference`)
+- Perform Coordinate-Ascent Variational Inference (CAVI) (`gemini_inference`)
 - Score Interactions (`gemini_score`)
 
+### Import Big Papi data
 ```{r}
 library("gemini")
-data("example-bigPapi", package = "gemini")
+data("counts", "guide.annotation", "sample.replicate.annotation", package = "gemini")
 ```
 
 ### Input
 GEMINI takes a counts matrix as follows:
-```{r, echo = F}
+```{r, echo = FALSE}
 knitr::kable(head(counts[,1:5]), caption = "Counts matrix", align = 'l')
 ```
 
 GEMINI also requires sample/replicate annotation and guide/gene annotation.
-```{r, echo = F}
+```{r, echo = FALSE}
 knitr::kable(head(sample.replicate.annotation), caption = "Sample/replicate annotations")
-knitr::kable(head(guide.annotation), caption = "Guide/gene annotation")
+knitr::kable(head(guide.annotation[,1:3]), caption = "Guide/gene annotation")
 ```
 
 These can be used to create a `gemini.input` object using the `gemini_create_input` function.
@@ -40,58 +39,66 @@ These can be used to create a `gemini.input` object using the `gemini_create_inp
 Input <- gemini_create_input(counts.matrix = counts,
                     sample.replicate.annotation = sample.replicate.annotation,
                     guide.annotation = guide.annotation,
-                    ETP.column = 'pDNA', # this can also be specified by column index
+                    ETP.column = 'pDNA', 
                     gene.column.names = c("U6.gene", "H1.gene"),
                     sample.column.name = "samplename",
-                    verbose = T)
+                    verbose = TRUE)
+
+# Note: ETP column can also be specified by column index 
+# (e.g. ETP.column = c(1))
 ```
 
 ### Pre-processing
-GEMINI requires log-fold changes as an input, which are calculated using the `gemini_calculate_lfc` function.
+GEMINI requires log-fold changes as an input, which are calculated using the `gemini_calculate_lfc` function. A pseudo-count (`CONSTANT`) of $32$ is used by default.
 ```{r}
-Input %<>% gemini_calculate_lfc(normalize = T, 
+Input %<>% gemini_calculate_lfc(normalize = TRUE, 
                                 CONSTANT = 32)
 ```
 
 ### Initialization and Inference
-To initialize the model, a `gemini.model` object is created using the `gemini_initialize` function.
+To initialize the CAVI approach, a `gemini.model` object is created using the `gemini_initialize` function. For large libraries, more cores can be specified to speed up the initialization (see ?gemini_parallelization).
 
-To note, at least one negative control gene **MUST** be specified here, and that the guides targeting this negative control gene **MUST** be paired with all other genes. We use CD81 in this example.
+To note, it is **highly recommended** that at least one negative control gene should be specified here, and all other genes should be paired with at least one negative control. We use CD81 in this example.
 
-Also to note, the `pattern_split` argument must describe a separator used in the rownames of the counts.matrix. For example, a semi-colon (;) is used in the Big Papi data and therefore specified here.
+In the absence of a negative control gene, the median LFC of all guide pairs targeting each gene is used to initialize the CAVI approach. However, this is only reasonable in all-by-all format screens.
+
+Also to note, the `pattern_split` argument must describe a separator used in the rownames of the counts.matrix. For example, a semi-colon (";") is used in the Big Papi data and therefore specified here. On the other hand, `pattern_join` is specified by the user to join the gene pairs. For example, if the `U6.gene` is BRCA2, and the `H1.gene` is PARP1, the output will be "BRCA2\{pattern_join\}PARP1".
+
 ```{r}
 Model <- gemini_initialize(Input = Input, 
-                  nc_gene = "HPRT intron", 
-                  pattern_join = '-',
+                  nc_gene = "CD81", 
+                  pattern_join = ';',
                   pattern_split = ';', 
                   cores = 1,
-                  verbose = T)
+                  verbose = TRUE)
 ```
 
-Inference is performed with the `gemini_inference` function.
+Inference is performed with the `gemini_inference` function. For large libraries, more cores can be specified to speed up the inference (see ?gemini_parallelization).
 
 ```{r}
 Model %<>% gemini_inference(cores = 1,
-                            verbose = F)
+                            verbose = FALSE)
 ```
 
-Convergence is visualized with the `gemini_plot_mae` function.
+### Convergence
+After running `gemini_inference`, the resulting convergence rate can be visualized. If the model is divergent, alternative parameters for the priors should be selected until convergence is achieved. This can be done through cross-validation. Details on this will be added soon.
 
-```{r}
+```{r, eval=T}
 gemini_plot_mae(Model)
 ```
 
 ### Scoring and Visualization
 To score genetic interactions, use the `gemini_score` function.
 
-To note, at least one positive control gene (`pc_gene`) should be specified to remove interactions involving individually lethal genes. If no positive control is explicitly specified, lethality is estimated as described in Zamanighomi *et al* ?.
+To note, at least one positive control gene (`pc_gene`) should be specified to remove interactions involving individually lethal genes. If no positive control is explicitly specified, lethality is estimated as described in Zamanighomi *et al*. In short, the most lethal 1st percentile of individual gene effects is treated as the positive control value.
 
-Additionally, non-interacting gene pairs (`nc_pairs`) should be specified for the calculation of p-values and false discovery rates (FDRs). If not specified, only scores are calculated.
+Additionally, non-interacting gene pairs (`nc_pairs`) should be specified for the calculation of p-values and false discovery rates (FDRs). If not specified, only scores are calculated, which reflects the relative strengths of interactions in each sample.
 
 ```{r}
-# Use other negative controls or known non-interacting gene pairs as nc_pairs
-nc_pairs <- grep("6T|CD81", rownames(Model$s), value = T)
-# Some nc_pairs...
+# Use non-interacting gene pairs as nc_pairs. A caveat here is that this set is constructed only using negative controls! This probably leads to biased sampling of the null distribution, thereby overestimating the number of significant hits, but still is useful in this case.
+nc_pairs <- grep("6T|HPRT", rownames(Model$s), value = TRUE)
+
+# An example of some nc_pairs...
 head(nc_pairs, n = 5)
 
 Score <- gemini_score(Model = Model,
@@ -99,32 +106,48 @@ Score <- gemini_score(Model = Model,
              nc_pairs = nc_pairs)
 ```
 
-Significant interactions can be identified through the FDR and p-value slots in the `Score` object. For example, the strongest interactions in the "A549" cell line can be found here:
+GEMINI's scores for interactions can be seen in the Score object. Here, we show the top 10 interacting gene pairs in A549, with their scores across all cell lines.
+```{r, echo = FALSE}
+knitr::kable(Score$strong[order(Score$strong[,"A549"], decreasing = TRUE)[1:10],], caption = "Strong scores for top 10 interactions from A549 in all samples")
+```
 
-```{r, echo = F}
-knitr::kable(Score$fdr_strong[order(Score$fdr_strong[,"A549"], decreasing = F)[1:10],], caption = "FDRs for top 10 interactions for A549")
+Significant interactions can be identified through the FDR and p-value slots in the `Score` object. Again, we show the top 10 interacting gene pairs in A549, but now present FDRs across all cell lines.
+
+```{r, echo = FALSE}
+knitr::kable(Score$fdr_strong[order(Score$fdr_strong[,"A549"], decreasing = FALSE)[1:10],], caption = "FDRs for top 10 interactions in A549")
 ```
 
 To visualize these interactions, we can use the `gemini_boxplot` function. For example, in BRCA2-PARP1:
 
 ```{r, eval = F}
 gemini_boxplot(Model = Model, 
-               gene.column.names = c("U6.gene", "H1.gene"), 
                g = "BRCA2",
-               h = "BRCA1",
-               nc_gene = "HPRT intron",
+               h = "PARP1",
+               nc_gene = "CD81",
                sample = "A549",
-			   show_inference = T, 
-			   identify_guides = T
+			   show_inference = TRUE, 
+			   identify_guides = TRUE
 			   )
 ```
 
 
-We can see that GEMINI makes adjustments to the individual gene effects of both BRCA2 and PARP1, and adjusts the sample-independent values of each to account for variation in the screen. Guides with the least adjustment to x (grey) are considered to have the least variation within the screen.
+We can see that GEMINI makes adjustments to the individual gene effects of both BRCA2 and PARP1, and adjusts the sample-independent values of each to account for variation in the screen. 
+
+This boxplot can also be re-colored by the adjustment made to each guide or guide pair through the sample-independent effects. Guides/guide pairs with the least adjustment to x (grey) are considered to have the least variation within the screen.
+```{r, eval = F}
+gemini_boxplot(Model = Model, 
+               g = "BRCA2",
+               h = "PARP1",
+               nc_gene = "CD81",
+               sample = "A549",
+			   show_inference = TRUE, 
+			   color_x = TRUE
+			   )
+```
 
 ### Summary
 
-GEMINI can be run on any counts matrix from a pairwise screen. GEMINI computes log fold changes and infers sample-dependent and sample-independent effects. Then, GEMINI calculates interaction strength and significance. 
+GEMINI can be run on any counts matrix from a pairwise screen. GEMINI computes log fold changes and infers sample-dependent and sample-independent effects using CAVI. Then, GEMINI calculates interaction strength and significance. 
 
-See Zamanighomi et al 
+The manuscript and more visualization tools will be made available soon.
 

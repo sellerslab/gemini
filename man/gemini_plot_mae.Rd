@@ -9,6 +9,14 @@ gemini_plot_mae(Model)
 \arguments{
 \item{Model}{a gemini.model object}
 }
+\value{
+a ggplot2 object
+}
 \description{
 Plots the average MAE of gemini model at each iteration step.
+}
+\examples{
+data("Model", package = "gemini")
+gemini_plot_mae(Model)
+
 }

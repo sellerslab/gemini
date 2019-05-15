@@ -5,15 +5,21 @@
 #'
 #' @param Model a gemini.model object
 #'
+#' @return a ggplot2 object
 #' @import ggplot2
 #' @importFrom scales pretty_breaks
 #' @export
+#' 
+#' @examples
+#' data("Model", package = "gemini")
+#' gemini_plot_mae(Model)
+#' 
 gemini_plot_mae <- function(Model){
 	stopifnot("gemini.model" %in% class(Model))
 	stopifnot("mae" %in% names(Model))
 
-	g = ggplot(data = data.frame(iter = (1:length(Model$mae))-1, mae = Model$mae),
-					aes(x = iter, y = mae)) +
+	g = ggplot(data = data.frame(iter = seq_len(length(Model$mae))-1, mae = Model$mae),
+					aes_string(x = 'iter', y = 'mae')) +
 		geom_point() +
 		geom_line() +
 	  labs(x = "Iterations", y = "Mean Absolute Error") +

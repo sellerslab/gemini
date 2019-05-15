@@ -21,6 +21,18 @@
 #' @import magrittr
 #' @import dplyr
 #' @export
+#' 
+#' @usage gemini_calculate_lfc(Input, counts = "counts", sample.column.name = "samplename",
+#' normalize = TRUE, CONSTANT = 32)
+#' 
+#' @examples
+#' 
+#' data("Input", package = "gemini")
+#' Input <- gemini_calculate_lfc(Input)
+#' 
+#' \dontrun{
+#' head(Input$LFC)
+#' }
 #'
 gemini_calculate_lfc <- function(Input, 
 								 counts = "counts", 
@@ -32,11 +44,11 @@ gemini_calculate_lfc <- function(Input,
 
 	# normalize and scale counts
 	mat <- Input[[counts]]
-	total.counts = sum(mat, na.rm = T)
+	total.counts = sum(mat, na.rm = TRUE)
 	SCALE = (total.counts / ncol(mat))
 	if(normalize){
 		norm.mat = apply(mat, 2, function(x){
-			x = ((x/sum(x, na.rm = T)) * SCALE) + CONSTANT
+			x = ((x/sum(x, na.rm = TRUE)) * SCALE) + CONSTANT
 		})
 		Input[[paste0("normalized_",counts)]] <- norm.mat
 		
@@ -47,7 +59,7 @@ gemini_calculate_lfc <- function(Input,
 	}
 	
 	data = apply(data, 2, function(x){
-		log2(x) - median(log2(x), na.rm = T)
+		log2(x) - median(log2(x), na.rm = TRUE)
 	})
 
 	# compute log-fold changes
@@ -61,7 +73,7 @@ gemini_calculate_lfc <- function(Input,
 	# If multiple ETP replicates belonging to only 1 sample (which is not found in LTP samples, i.e. pDNA)
 		ETP = data[,ETP.cols] %>%
 			as.data.frame() %>%
-			rowMeans(na.rm = T)
+			rowMeans(na.rm = TRUE)
 	}
 	
 	# If ETPs match LTPs by sample, that is handled here:
@@ -75,24 +87,24 @@ gemini_calculate_lfc <- function(Input,
 				stop("No ETP specified for ", x)
 			ETP = data[,ETP.cols] %>%
 				as.data.frame() %>%
-				rowMeans(na.rm = T) # Create ETP df for this sample
+				rowMeans(na.rm = TRUE) # Create ETP df for this sample
 		}
 		cols <- Input$replicate.map$colname[Input$replicate.map[[sample.column.name]]==x & Input$replicate.map$TP == "LTP"]
 		LFC <- LTP[,match(cols, colnames(LTP), nomatch = 0)] %>%
-			as.data.frame(optional = T) %>%
-			rowMeans(na.rm = T) %>%
+			as.data.frame(optional = TRUE) %>%
+			rowMeans(na.rm = TRUE) %>%
 			magrittr::subtract(ETP)
 		return(LFC)
 	}) %>%
 		magrittr::set_names(unique(Input$replicate.map[[sample.column.name]][Input$replicate.map$TP == "LTP"])) %>%
 		dplyr::bind_cols() %>%
-		as.data.frame(optional = T, stringsAsFactors = F) %>%
+		as.data.frame(optional = TRUE, stringsAsFactors = FALSE) %>%
 		magrittr::set_rownames(Input$guide.pair.annot[,1])
 
 	unique.to.sample <- names(which(apply(Input$replicate.map, 2, function(x) length(unique(x))) == length(unique(Input$replicate.map[[sample.column.name]]))))
 	Input$sample.annot <- Input$replicate.map %>%
-		dplyr::filter(TP == "LTP") %>%
-		dplyr::select(sample.column.name, TP, unique.to.sample) %>%
+		dplyr::filter(.$`TP` == "LTP") %>%
+		dplyr::select(sample.column.name, 'TP', unique.to.sample) %>%
 		unique() %>%
 		dplyr::mutate(rowname = colnames(LTP_df))
 

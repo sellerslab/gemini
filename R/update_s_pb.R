@@ -2,9 +2,6 @@
 #' @description Update values of s using data from \code{Input} and current values of other parameters.
 #'
 #' @param Model a Model object of class gemini.model
-#' @param Input an Input object of class gemini
-#' @param LFC an object within \code{Input} containing log-fold change values
-#' @param guide.pair.annot an object within \code{Input} mapping guide pairs to individual genes.
 #' @param mean_s numeric indicating prior mean of s (default 0)
 #' @param sd_s numeric indicating prior sd of s (default 10)
 #' @param cores a numeric indicating the number of cores to use, see \code{\link{gemini_parallel}}. default=1.
@@ -13,16 +10,14 @@
 #' @return An object of class gemini.model
 #'
 #' @import pbmcapply
+#' @import parallel
 #' @export
 #'
 update_s_pb <- function(Model, 
-                        Input, 
-                        LFC = "LFC", 
-                        guide.pair.annot = "guide.pair.annot", 
                         mean_s = 0, 
                         sd_s = 10, 
                         cores = 1, 
-                        verbose = F){
+                        verbose = FALSE){
   
   if(verbose) {
     message("Updating s...")
@@ -30,27 +25,38 @@ update_s_pb <- function(Model,
     tstart = Sys.time()
   }
   
-  LFC <- Input[[LFC]]
-  guide2gene <- Input[[guide.pair.annot]]
+  Input <- Model$Input
+  LFC <- Input[[Model$LFC.name]]
+  guide2gene <- Input[[Model$guide.pair.annot]]
   
   # mean of gamma distribution
   tau = Model$alpha/Model$beta
   
   # updating synergy
-  s_loop <- function(i, Model, guide2gene, LFC, tau, mean_s, sd_s){
-    gihj = Model$hash_s[[i]]
+  s_loop <- function(gh, Model, guide2gene, LFC, tau, mean_s, sd_s){
+    gihj = Model$hash_s[[gh]]
     gi = Model$hashes_x$paired_guide[gihj,1]
     hj = Model$hashes_x$paired_guide[gihj,2]
     g = guide2gene[match(gihj,guide2gene[,1]),2]
     h = guide2gene[match(gihj,guide2gene[,1]),3]
     
     # numerator for pair of genes
-    numerator = (Model$xx[gihj]*tau[gihj,])*(LFC[gihj,] - Model$x_seq1[gi]*Model$y[g,] - Model$x_seq2[hj]*Model$y[h,])
-    numerator = mean_s/(sd_s^2) + colSums(as.matrix(numerator), na.rm = T)
-    
+    numerator = (Model$xx[gihj]*tau[gihj,])*(LFC[gihj,] - Model$x[gi]*Model$y[g,] - Model$x[hj]*Model$y[h,])
+    if (length(gihj)>1){
+    	numerator = mean_s/(sd_s^2) + colSums(as.matrix(numerator), na.rm = TRUE)
+    } else{
+        # transpose because of R
+    	numerator = mean_s/(sd_s^2) + colSums(as.matrix(t(numerator)), na.rm = TRUE)
+    }
+
     # denominator for pair of genes
-    denominator = 1/(sd_s^2) + colSums(as.matrix(Model$xx2[gihj]*tau[gihj,]), na.rm = T)
-    
+    if (length(gihj)>1){
+    	denominator = 1/(sd_s^2) + colSums(as.matrix(Model$xx2[gihj]*tau[gihj,]), na.rm = TRUE)
+    } else{
+        # transpose because of R
+    	denominator = 1/(sd_s^2) + colSums(as.matrix(t(Model$xx2[gihj]*tau[gihj,])), na.rm = TRUE)
+    }
+
     # updating s and s2
     s = numerator/denominator
     s2 = s^2 + 1/denominator
@@ -58,16 +64,25 @@ update_s_pb <- function(Model,
     return(list(s = s, s2 = s2))
   }
   
-  s_res <- pbmcapply::pbmclapply(X = rownames(Model$s), FUN = s_loop, Model = Model, 
-                    guide2gene = guide2gene, LFC = LFC, tau = tau,
-                    mean_s = mean_s, sd_s = sd_s, mc.cores = cores, max.vector.size = 9999)
+  if(verbose){
+      s_res <- pbmcapply::pbmclapply(X = rownames(Model$s), FUN = s_loop, 
+                                     Model = Model, guide2gene = guide2gene, 
+                                     LFC = LFC, tau = tau,mean_s = mean_s, 
+                                     sd_s = sd_s, mc.cores = cores)
+  }else{
+      s_res <- parallel::mclapply(X = rownames(Model$s), FUN = s_loop, 
+                                  Model = Model, guide2gene = guide2gene, 
+                                  LFC = LFC, tau = tau,mean_s = mean_s, 
+                                  sd_s = sd_s, mc.cores = cores)
+  }
+  
   
   Model$s[] <- lapply(s_res, extract, "s") %>%
-    unlist(recursive = F, use.names = F) %>%
+    unlist(recursive = FALSE, use.names = FALSE) %>%
     do.call(rbind, .)
   
   Model$s2[] <- lapply(s_res, extract, "s2") %>%
-    unlist(recursive = F, use.names = F) %>%
+    unlist(recursive = FALSE, use.names = FALSE) %>%
     do.call(rbind, .)
 
   # output

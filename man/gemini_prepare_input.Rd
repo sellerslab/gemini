@@ -13,6 +13,9 @@ gemini_prepare_input(Input, gene.columns, sample.col.name = "samplename")
 
 \item{sample.col.name}{a character indicating the name of the sample column (default = "samplename")}
 }
+\value{
+a (prepared) gemini.input object
+}
 \description{
 This is an internal function to GEMINI, allowing for data cleanup and preprocessing before a Model object is created. This removes any gene pairs targeting the same gene twice, and removes any empty samples/replicates.
 }

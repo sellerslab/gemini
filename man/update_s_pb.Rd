@@ -4,18 +4,11 @@
 \alias{update_s_pb}
 \title{update_s}
 \usage{
-update_s_pb(Model, Input, LFC = "LFC",
-  guide.pair.annot = "guide.pair.annot", mean_s = 0, sd_s = 10,
-  cores = 1, verbose = F)
+update_s_pb(Model, mean_s = 0, sd_s = 10, cores = 1,
+  verbose = FALSE)
 }
 \arguments{
 \item{Model}{a Model object of class gemini.model}
-
-\item{Input}{an Input object of class gemini}
-
-\item{LFC}{an object within \code{Input} containing log-fold change values}
-
-\item{guide.pair.annot}{an object within \code{Input} mapping guide pairs to individual genes.}
 
 \item{mean_s}{numeric indicating prior mean of s (default 0)}
 

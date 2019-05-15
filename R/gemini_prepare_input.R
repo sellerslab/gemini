@@ -6,6 +6,7 @@
 #' @param gene.columns a character vector of length(2)
 #' @param sample.col.name a character indicating the name of the sample column (default = "samplename")
 #'
+#' @return a (prepared) gemini.input object
 #' @export
 #'
 
@@ -13,7 +14,7 @@ gemini_prepare_input <-
 	function(Input, gene.columns, sample.col.name = "samplename") {
 		LFC = "LFC"
 		newInput <- list()
-		class(newInput) <- c(class(newInput), "gemini.input")
+		class(newInput) <- base::union(class(Input), "gemini.input")
 		
 		dups <-
 			apply(Input$guide.pair.annot[, gene.columns], 1, function(x)

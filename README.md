@@ -17,9 +17,8 @@ devtools::install_github(repo = "sellerslab/gemini", build_vignettes = TRUE)
 You can (eventually) install the stable release version of gemini from [Bioconductor](https://www.bioconductor.org/) with:
 
 ``` r
-if (!requireNamespace("BiocManager", quietly = TRUE))
-    install.packages("BiocManager")
-BiocManager::install("gemini")
+source("https://www.bioconductor.org/biocLite.R")
+biocLite("gemini")
 ```
 
 Quickstart

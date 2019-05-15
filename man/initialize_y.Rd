@@ -4,20 +4,10 @@
 \alias{initialize_y}
 \title{initialize_y}
 \usage{
-initialize_y(Model, Input, LFC = "LFC",
-  guide.pair.annot = "guide.pair.annot", nc_gene, verbose = F,
-  cores = 1)
+initialize_y(Model, verbose = FALSE, cores = 1)
 }
 \arguments{
 \item{Model}{an object of class gemini.model}
-
-\item{Input}{an object of class gemini.input}
-
-\item{LFC}{an object within \code{Input} containing log-fold change values}
-
-\item{guide.pair.annot}{an object within \code{Input} containing guide to gene annotations}
-
-\item{nc_gene}{a character naming the gene to use as a negative control}
 
 \item{verbose}{default FALSE}
 

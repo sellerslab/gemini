@@ -4,22 +4,10 @@
 \alias{update_mae}
 \title{update_mae}
 \usage{
-update_mae(Model, Input, LFC = "LFC",
-  guide.pair.annot = "guide.pair.annot", nc_gene, pattern_join = ";",
-  verbose = F)
+update_mae(Model, verbose = FALSE)
 }
 \arguments{
 \item{Model}{a Model object of class gemini.model}
-
-\item{Input}{an Input object of class gemini.input}
-
-\item{LFC}{an object within \code{Input} containing log-fold change values}
-
-\item{guide.pair.annot}{an object within \code{Input} mapping guide pairs to individual genes.}
-
-\item{nc_gene}{a character naming the gene to use as a negative control}
-
-\item{pattern_join}{a character to join the gene combinations found in \code{guide.pair.annot}. default ';'}
 
 \item{verbose}{default FALSE}
 }

@@ -4,23 +4,15 @@
 \alias{initialize_tau}
 \title{initialize_tau}
 \usage{
-initialize_tau(Model, Input, replicate.map = "replicate.map",
-  sample.column.name = "samplename", CONSTANT = 32,
-  prior_shape = 0.5, window = NULL, monotonize = FALSE,
-  verbose = F)
+initialize_tau(Model, CONSTANT = 32, prior_shape = 0.5,
+  window = NULL, monotonize = FALSE, verbose = FALSE)
 }
 \arguments{
 \item{Model}{an object of class gemini.model}
 
-\item{Input}{an object of class gemini.input}
-
-\item{replicate.map}{an object within \code{Input} containing replicate and sample mappings}
-
-\item{sample.column.name}{a character or integer indicating which column of \code{Input$replicate.map} describes the samples.}
-
 \item{CONSTANT}{a numeric indicating a constant value that shifts counts to reduce outliers (default = 32).}
 
-\item{prior_shape}{shape parameter of Gamma distribution used to model the variation in the data in \code{Input}}
+\item{prior_shape}{shape parameter of Gamma distribution used to model the variation in the data in \code{Input}. If single numeric value, then shape parameters for all samples are assumed equal. Otherwise, a named numeric vector of shape parameters the same length as the number of samples (excluding early time point).}
 
 \item{window}{numeric if window smoothing should be done on initialized tau values, otherwise NULL (default) for no window smoothing}
 
@@ -33,4 +25,8 @@ a Model object of class gemini.model including new slots for alpha and beta valu
 }
 \description{
 Initialize all tau values based on the observed replicate variance.
+}
+\examples{
+data("Model", package = "gemini")
+Model <- initialize_tau(Model, CONSTANT = 32, prior_shape = 0.5)
 }

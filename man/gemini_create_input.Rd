@@ -6,8 +6,8 @@
 \usage{
 gemini_create_input(counts.matrix, sample.replicate.annotation = NULL,
   guide.annotation = NULL, samplesAreColumns = TRUE,
-  sample.column.name = NULL, gene.column.names = NULL,
-  ETP.column = 1, LTP.column = NULL, verbose = F)
+  sample.column.name = "samplename", gene.column.names = NULL,
+  ETP.column = 1, LTP.column = NULL, verbose = FALSE)
 }
 \arguments{
 \item{counts.matrix}{a matrix of counts with rownames corresponding to features (e.g. guides) and colnames corresponding to samples.}
@@ -45,4 +45,17 @@ This function initializes a gemini.input object from a counts matrix. There are 
 \item \code{sample.column.name} must specify a column in \code{sample.replicate.annotation} (either by name or index) that describes unique samples.
 \item \code{gene.column.names} must specify two columns in \code{sample.replicate.annotation} (either by name or index) that describe genes.
 }
+}
+\examples{
+data("counts", package = "gemini")
+data("sample.replicate.annotation", package = "gemini")
+data("guide.annotation", package = "gemini")
+Input <- gemini_create_input(
+    counts.matrix = counts,
+    sample.replicate.annotation = sample.replicate.annotation,
+    guide.annotation = guide.annotation,
+    sample.column.name = "samplename",
+    gene.column.names = c("U6.gene", "H1.gene")
+)
+
 }
