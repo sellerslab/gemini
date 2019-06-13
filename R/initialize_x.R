@@ -3,7 +3,7 @@
 #'
 #' @param Model a Model object of class gemini.model
 #' @param concordance a numeric value to initialize x
-#' @param cores a numeric indicating the number of cores to use.  See \code{\link[gemini]{gemini_parallel}} default 1.
+#' @param cores a numeric indicating the number of cores to use.  See \code{\link[gemini]{gemini_parallelization}} default 1.
 #' @param verbose default FALSE
 #'
 #' @note As there is much hashing involved in this function, this tends to be computationally intensive.
@@ -11,6 +11,10 @@
 #' amount of memory consumed. 
 #' 
 #' @return a Model object of class gemini.model including new slots for x values and internal-use hashes
+#'
+#' @examples
+#' Model <- gemini::Model
+#' Model %<>% initialize_x()
 #'
 #' @export
 initialize_x <- function(Model,

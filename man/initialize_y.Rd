@@ -11,11 +11,16 @@ initialize_y(Model, verbose = FALSE, cores = 1)
 
 \item{verbose}{default FALSE}
 
-\item{cores}{a numeric indicating the number of cores to use.  See details in gemini_parallel. (default=1)}
+\item{cores}{a numeric indicating the number of cores to use.  See details in \code{\link[gemini]{gemini_parallelization}}. (default=1)}
 }
 \value{
 a Model object of class gemini.model including new slots for y values
 }
 \description{
 Initialize all y values from guide pairs including a negative control.
+}
+\examples{
+Model <- gemini::Model
+Model \%<>\% initialize_y()
+
 }

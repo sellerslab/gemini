@@ -6,6 +6,10 @@
 #' @param verbose default FALSE
 #'
 #' @return An object of class gemini.model
+#' 
+#' @examples 
+#' Model <- gemini::Model
+#' Model %<>% update_mae()
 #'
 #' @export
 update_mae  <- function(Model, 

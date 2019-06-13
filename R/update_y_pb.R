@@ -12,6 +12,11 @@
 #' @importFrom stats setNames
 #' @importFrom utils getTxtProgressBar
 #' @importFrom utils setTxtProgressBar
+#' 
+#' @examples
+#' Model <- gemini::Model
+#' Model %<>% update_y_pb()
+#' 
 #' @export
 update_y_pb <- function(Model,
 						mean_y = 0,

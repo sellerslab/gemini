@@ -4,7 +4,7 @@
 #' @param Model a Model object of class gemini.model
 #' @param mean_s numeric indicating prior mean of s (default 0)
 #' @param sd_s numeric indicating prior sd of s (default 10)
-#' @param cores a numeric indicating the number of cores to use, see \code{\link{gemini_parallel}}. default=1.
+#' @param cores a numeric indicating the number of cores to use, see \code{\link[gemini]{gemini_parallelization}}. default=1.
 #' @param verbose default FALSE
 #'
 #' @return An object of class gemini.model
@@ -12,6 +12,11 @@
 #' @import pbmcapply
 #' @import parallel
 #' @export
+#' 
+#' @examples 
+#' 
+#' Model <- gemini::Model
+#' Model %<>% update_s_pb()
 #'
 update_s_pb <- function(Model, 
                         mean_s = 0, 

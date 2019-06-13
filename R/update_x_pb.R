@@ -6,7 +6,7 @@
 #' @param sd_x a numeric indicating prior sd of x
 #' @param mean_xx a numeric indicating prior mean of xx
 #' @param sd_xx a numeric indicating prior sd of xx
-#' @param cores a numeric indicating the number of cores to use.  See \code{\link{gemini_parallel}} for details.  (default=1).
+#' @param cores a numeric indicating the number of cores to use.  See \code{\link[gemini]{gemini_parallelization}} for details.  (default=1).
 #' @param verbose default FALSE
 #'
 #' @return An object of class gemini.model
@@ -22,6 +22,10 @@
 #'
 #' @importFrom utils setTxtProgressBar
 #' @importFrom utils getTxtProgressBar
+#'
+#' @examples 
+#' Model <- gemini::Model
+#' Model %<>% update_x_pb()
 #'
 #' @export
 update_x_pb <- function(Model,

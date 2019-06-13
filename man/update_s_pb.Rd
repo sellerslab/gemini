@@ -14,7 +14,7 @@ update_s_pb(Model, mean_s = 0, sd_s = 10, cores = 1,
 
 \item{sd_s}{numeric indicating prior sd of s (default 10)}
 
-\item{cores}{a numeric indicating the number of cores to use, see \code{\link{gemini_parallel}}. default=1.}
+\item{cores}{a numeric indicating the number of cores to use, see \code{\link[gemini]{gemini_parallelization}}. default=1.}
 
 \item{verbose}{default FALSE}
 }
@@ -23,4 +23,10 @@ An object of class gemini.model
 }
 \description{
 Update values of s using data from \code{Input} and current values of other parameters.
+}
+\examples{
+
+Model <- gemini::Model
+Model \%<>\% update_s_pb()
+
 }

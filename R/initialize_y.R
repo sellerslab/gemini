@@ -3,9 +3,13 @@
 #'
 #' @param Model an object of class gemini.model
 #' @param verbose default FALSE
-#' @param cores a numeric indicating the number of cores to use.  See details in gemini_parallel. (default=1)
+#' @param cores a numeric indicating the number of cores to use.  See details in \code{\link[gemini]{gemini_parallelization}}. (default=1)
 #'
 #' @return a Model object of class gemini.model including new slots for y values
+#' 
+#' @examples 
+#' Model <- gemini::Model
+#' Model %<>% initialize_y()
 #'
 #' @export
 initialize_y <- function(Model,

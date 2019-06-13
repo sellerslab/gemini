@@ -46,7 +46,7 @@ otherwise NULL (default) for no window smoothing}
 
 \item{verbose}{default FALSE}
 
-\item{cores}{numeric indicating the number of cores to use. See details in \code{\link[gemini]{gemini_parallel}}.}
+\item{cores}{numeric indicating the number of cores to use. See details in \code{\link[gemini]{gemini_parallelization}}.}
 
 \item{save}{a character (file path) or logical indicating whether the initialized model should be saved.}
 }

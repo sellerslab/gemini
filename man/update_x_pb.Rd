@@ -18,7 +18,7 @@ update_x_pb(Model, mean_x = 1, sd_x = 1, mean_xx = 1, sd_xx = 1,
 
 \item{sd_xx}{a numeric indicating prior sd of xx}
 
-\item{cores}{a numeric indicating the number of cores to use.  See \code{\link{gemini_parallel}} for details.  (default=1).}
+\item{cores}{a numeric indicating the number of cores to use.  See \code{\link[gemini]{gemini_parallelization}} for details.  (default=1).}
 
 \item{verbose}{default FALSE}
 }
@@ -35,4 +35,9 @@ To account for potential dependence, we define three groups of guides: group 1 (
 ), group 2 (guides only in position 2), and group 3 (guides in both position 1 and position 2). 
 Parallelization is possible for groups 1 and 2, but only serial updates are possible for group 3. 
 As such, updates for this group will take longer.
+}
+\examples{
+Model <- gemini::Model
+Model \%<>\% update_x_pb()
+
 }
