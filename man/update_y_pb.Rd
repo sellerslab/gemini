@@ -21,3 +21,8 @@ An object of class gemini.model
 \description{
 Update values of y using data from \code{Input} and current values of other parameters.
 }
+\examples{
+Model <- gemini::Model
+Model \%<>\% update_y_pb()
+
+}

@@ -11,7 +11,7 @@ initialize_x(Model, concordance = 1, cores = 1, verbose = FALSE)
 
 \item{concordance}{a numeric value to initialize x}
 
-\item{cores}{a numeric indicating the number of cores to use.  See \code{\link[gemini]{gemini_parallel}} default 1.}
+\item{cores}{a numeric indicating the number of cores to use.  See \code{\link[gemini]{gemini_parallelization}} default 1.}
 
 \item{verbose}{default FALSE}
 }
@@ -25,4 +25,9 @@ Initialize all x values to the value of \code{concordance}
 As there is much hashing involved in this function, this tends to be computationally intensive.
 As such, we have enabled parallelization of most hash steps, but this may still be rate-limited by the 
 amount of memory consumed.
+}
+\examples{
+Model <- gemini::Model
+Model \%<>\% initialize_x()
+
 }

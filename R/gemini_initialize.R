@@ -21,7 +21,7 @@
 #' otherwise NULL (default) for no window smoothing
 #' @param monotonize a logical specifying whether the variance should be monotonically increasing. (default FALSE)
 #' @param verbose default FALSE
-#' @param cores numeric indicating the number of cores to use. See details in \code{\link[gemini]{gemini_parallel}}.
+#' @param cores numeric indicating the number of cores to use. See details in \code{\link[gemini]{gemini_parallelization}}.
 #' @param save a character (file path) or logical indicating whether the initialized model should be saved.
 #'
 #' @details

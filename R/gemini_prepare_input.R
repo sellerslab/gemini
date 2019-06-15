@@ -7,6 +7,10 @@
 #' @param sample.col.name a character indicating the name of the sample column (default = "samplename")
 #'
 #' @return a (prepared) gemini.input object
+#' 
+#' @examples 
+#' Input %<>% gemini_prepare_input(gene.columns = c("U6.gene", "H1.gene"))
+#' 
 #' @export
 #'
 

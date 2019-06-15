@@ -17,3 +17,8 @@ An object of class gemini.model
 \description{
 Calculate mean absolute error across all guide combinations.
 }
+\examples{
+Model <- gemini::Model
+Model \%<>\% update_mae()
+
+}

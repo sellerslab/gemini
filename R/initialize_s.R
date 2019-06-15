@@ -2,7 +2,7 @@
 #' @description Initialize s values using initialized y values and data from \code{Input}
 #'
 #' @param Model an object of class gemini.model
-#' @param cores a numeric indicating the number of cores to use.  See \code{\link[gemini]{gemini_parallel}} default 1.
+#' @param cores a numeric indicating the number of cores to use.  See \code{\link[gemini]{gemini_parallelization}} default 1.
 #' @param verbose default FALSE
 #'
 #' @return a Model object of class gemini.model including new slots for s values

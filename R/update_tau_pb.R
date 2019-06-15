@@ -2,13 +2,17 @@
 #' @description Update parameters of tau using data from \code{Input} and current values of other parameters.
 #'
 #' @param Model a Model object of class gemini.model
-#' @param cores a numeric indicating the number of cores to use.  See \code{\link{gemini_parallel}} for details.  (default=1).
+#' @param cores a numeric indicating the number of cores to use.  See \code{\link[gemini]{gemini_parallelization}} for details.  (default=1).
 #' @param verbose default FALSE
 #'
 #' @return An object of class gemini.model
 #'
 #' @import pbmcapply
 #' @import magrittr
+#'
+#' @examples 
+#' Model <- gemini::Model
+#' Model %<>% update_tau_pb()
 #'
 #' @export
 update_tau_pb <- function(Model,

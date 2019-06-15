@@ -1,7 +1,7 @@
 Package: gemini
 Type: Package
 Title: GEMINI: Variational inference approach to infer genetic interactions from pairwise CRISPR screens
-Version: 0.3.0
+Version: 0.99.0
 Authors@R: c(
   person("Mahdi", "Zamanighomi", email = "mzamanig@broadinstitute.org", role = c('aut')),
   person("Sidharth", "Jain", email = "sidharthsjain@gmail.com", role = c('aut', 'cre'))
@@ -10,6 +10,7 @@ Description: GEMINI uses log-fold changes to model sample-dependent and independ
 	and uses a variational Bayes approach to infer these effects. The inferred effects
 	are used to score and identify genetic interactions, such as lethality and recovery.
 	More details can be found in Zamanighomi et al. at doi:???.
+Depends: R (>= 3.6.0)
 License: BSD_3_clause + file LICENSE
 Encoding: UTF-8
 LazyData: true
@@ -17,6 +18,7 @@ RoxygenNote: 6.1.1
 biocViews: Software, CRISPR, Bayesian
 Imports:
   dplyr,
+  grDevices,
   ggplot2,
   magrittr,
   mixtools,
@@ -28,5 +30,6 @@ Imports:
 Suggests: 
     knitr,
     rmarkdown,
-    testthat
+    testthat,
+    magrittr
 VignetteBuilder: knitr

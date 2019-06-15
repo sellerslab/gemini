@@ -9,7 +9,7 @@ initialize_s(Model, cores = 1, verbose = FALSE)
 \arguments{
 \item{Model}{an object of class gemini.model}
 
-\item{cores}{a numeric indicating the number of cores to use.  See \code{\link[gemini]{gemini_parallel}} default 1.}
+\item{cores}{a numeric indicating the number of cores to use.  See \code{\link[gemini]{gemini_parallelization}} default 1.}
 
 \item{verbose}{default FALSE}
 }
