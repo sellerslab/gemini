@@ -1,5 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
+[![DOI](https://zenodo.org/badge/175870293.svg)](https://zenodo.org/badge/latestdoi/175870293)
+
 gemini
 ======
 
