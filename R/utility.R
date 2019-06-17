@@ -1,11 +1,15 @@
 #' @importFrom stats median
 #' @importFrom parallel mclapply
+
 #' @importFrom magrittr %>%
+#' @export
+magrittr::`%>%`
+
 #' @importFrom magrittr %<>%
 #' @export
-
 magrittr::`%<>%`
-magrittr::`%>%`
+
+
 
 .median_normalize <- function(counts, CONSTANT = 32) {
 	m = log2(counts + CONSTANT) - median(log2(counts + CONSTANT), na.rm = TRUE)
