@@ -1,14 +1,11 @@
 #' @importFrom stats median
 #' @importFrom parallel mclapply
 
-#' @importFrom magrittr %>%
-#' @export
-magrittr::`%>%`
-
 #' @importFrom magrittr %<>%
+#' @name %<>%
+#' @rdname compound
 #' @export
 magrittr::`%<>%`
-
 
 
 .median_normalize <- function(counts, CONSTANT = 32) {

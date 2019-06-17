@@ -5,6 +5,8 @@ output: github_document
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 [![DOI](https://zenodo.org/badge/175870293.svg)](https://zenodo.org/badge/latestdoi/175870293)
 
+[![License](https://img.shields.io/badge/License-BSD%203--Clause-orange.svg)](https://opensource.org/licenses/BSD-3-Clause)
+
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
