@@ -11,7 +11,7 @@ Notes about parallelization in combinatorial CRISPR analysis
 
 To improve efficiency and scalability, GEMINI employs parallelization, enabling a rapid initialization and update routine. 
 Parallelization was implemented using the R \code{pbmclapply} package, and specifically through the \code{\link[pbmcapply]{pbmclapply}} function. 
-As pbmclapply (and it's parent function, \code{\link[parallel]{mclapply}}) relies on forking, parallelization is currently limited to Unix-like (Linux flavors and macOS) machines, but may be extended to other OS in later versions through socket parallelization. In the event that GEMINI is used on a Windows machine, all computations are performed in serial.
+As pbmclapply (and it's parent function, \code{\link{mclapply}}) relies on forking, parallelization is currently limited to Unix-like (Linux flavors and macOS) machines, but may be extended to other OS in later versions through socket parallelization. In the event that GEMINI is used on a Windows machine, all computations are performed in serial.
 }
 
 \section{Parallelized processes}{
