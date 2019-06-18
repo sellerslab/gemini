@@ -1,9 +1,10 @@
 #' @importFrom stats median
 #' @importFrom parallel mclapply
 
+
 #' @importFrom magrittr %<>%
-#' @name %<>%
 #' @rdname compound
+#' @name %<>%
 #' @export
 magrittr::`%<>%`
 
