@@ -9,6 +9,11 @@
 counts
 }
 \description{
-The counts matrix from the Big Papi SynLet library.
+Counts matrix from the Big Papi SynLet dataset. 
+The Big Papi dataset was published in Najm et al. 2018 (doi: 10.1038/nbt.4048). 
+The counts were acquired from Supplementary Table 3.
+}
+\seealso{
+https://www.nature.com/articles/nbt.4048
 }
 \keyword{data}

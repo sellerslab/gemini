@@ -20,7 +20,7 @@ a Model object of class gemini.model including new slots for y values
 Initialize all y values from guide pairs including a negative control.
 }
 \examples{
-Model <- gemini::Model
+data("Model", package = "gemini")
 Model \%<>\% initialize_y()
 
 }

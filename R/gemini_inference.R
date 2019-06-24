@@ -39,8 +39,7 @@
 #' 
 #' @examples 
 #' data("Model", package = "gemini")
-#' Model <- gemini_initialize(Input, nc_gene = "CD81")
-#' Model %<>% gemini_inference(verbose = FALSE, n_iterations = 1)
+#' Model %<>% gemini_inference(verbose = FALSE, n_iterations = 1) # iterations set to 1 for testing
 #' 
 gemini_inference <- function(Model,
                              n_iterations = 20,
@@ -59,6 +58,7 @@ gemini_inference <- function(Model,
                              mean_s = 0,
                              sd_s = 10,
                              
+                             # Run-time params:
                              threshold = 1e-3,
                              cores = 1,
                              force_results = FALSE,

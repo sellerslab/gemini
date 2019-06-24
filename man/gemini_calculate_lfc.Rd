@@ -25,9 +25,9 @@ a gemini object identical to \code{Input} that also contains new objects called 
 Given a gemini.input object, calculates log-fold change from \code{counts}.
 }
 \details{
-See Methods from Zamanighomi et al. 2019 for a comprehensive 
-description of the calculation of log-fold change, normalization, 
-and count processing. 
+See Methods from Zamanighomi et al. 2019 for a comprehensive
+description of the calculation of log-fold change, normalization,
+and count processing.
 
 If multiple early time-points are provided for a given sample, they are treated as replicates and averaged,
 and used to compute log-fold change against any specified late time points.
@@ -40,8 +40,6 @@ the early and late timepoints in \code{sample.column.name}
 data("Input", package = "gemini")
 Input <- gemini_calculate_lfc(Input)
 
-\dontrun{
 head(Input$LFC)
-}
 
 }

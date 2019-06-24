@@ -19,10 +19,11 @@ update_y_pb(Model, mean_y = 0, sd_y = 10, verbose = FALSE)
 An object of class gemini.model
 }
 \description{
-Update values of y using data from \code{Input} and current values of other parameters.
+Update values of y using data from \code{Input} 
+and current values of other parameters.
 }
 \examples{
-Model <- gemini::Model
+data("Model", package = "gemini")
 Model \%<>\% update_y_pb()
 
 }

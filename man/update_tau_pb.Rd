@@ -20,7 +20,7 @@ An object of class gemini.model
 Update parameters of tau using data from \code{Input} and current values of other parameters.
 }
 \examples{
-Model <- gemini::Model
+data("Model", package = "gemini")
 Model \%<>\% update_tau_pb()
 
 }

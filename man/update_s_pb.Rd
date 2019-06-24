@@ -26,7 +26,7 @@ Update values of s using data from \code{Input} and current values of other para
 }
 \examples{
 
-Model <- gemini::Model
+data("Model", package = "gemini")
 Model \%<>\% update_s_pb()
 
 }

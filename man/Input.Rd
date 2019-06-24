@@ -3,17 +3,19 @@
 \docType{data}
 \name{Input}
 \alias{Input}
-\alias{Model}
 \title{Input object from Big Papi}
 \format{An object of class \code{list} (inherits from \code{gemini.input}, \code{gemini.input}) of length 6.}
 \usage{
 Input
-
-Model
 }
 \description{
-A gemini.input object created from the Big Papi data.
-
-A gemini.model object created from the Big Papi data, after CAVI.
+A gemini.input object created from the Big Papi SynLet dataset.
+The Big Papi dataset was published in Najm et al. 2018 (doi: 10.1038/nbt.4048).
+The Input object here is created from the data in \link{counts}, 
+\link{guide.annotation}, and \link{sample.replicate.annotation} 
+using the \code{\link{gemini_create_input}} function.
+}
+\seealso{
+https://www.nature.com/articles/nbt.4048
 }
 \keyword{data}

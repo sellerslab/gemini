@@ -62,7 +62,6 @@ more details.
 }
 \examples{
 data("Model", package = "gemini")
-Model <- gemini_initialize(Input, nc_gene = "CD81")
-Model \%<>\% gemini_inference(verbose = FALSE, n_iterations = 1)
+Model \%<>\% gemini_inference(verbose = FALSE, n_iterations = 1) # iterations set to 1 for testing
 
 }

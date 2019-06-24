@@ -9,33 +9,37 @@
 #' @return a (prepared) gemini.input object
 #' 
 #' @examples 
+#' data("Input", package = "gemini")
 #' Input %<>% gemini_prepare_input(gene.columns = c("U6.gene", "H1.gene"))
+#' 
+#' @importFrom dplyr filter
+#' @importFrom dplyr select
 #' 
 #' @export
 #'
 
 gemini_prepare_input <-
-	function(Input, gene.columns, sample.col.name = "samplename") {
-		LFC = "LFC"
-		newInput <- list()
-		class(newInput) <- base::union(class(Input), "gemini.input")
-		
-		dups <-
-			apply(Input$guide.pair.annot[, gene.columns], 1, function(x)
-				any(duplicated(x)))
-		newInput[["counts"]] <-
-			Input$counts[!dups, colSums(!is.na(Input$counts)) != 0]
-		newInput[["replicate.map"]] <- Input$replicate.map %>%
-			dplyr::filter(colSums(!is.na(Input$counts)) != 0) %>%
-			dplyr::select(c("colname", sample.col.name, "TP"))
-		newInput[["guide.pair.annot"]] <- Input$guide.pair.annot %>%
-			dplyr::filter(!dups) %>%
-			dplyr::select(c("rowname", gene.columns))
-		if (LFC %in% names(Input)) {
-			newInput[["LFC"]] <-
-				data.matrix(Input[[LFC]][!dups, unique(newInput$replicate.map$sample[newInput$replicate.map$TP ==
-																					 	"LTP"])])
-			colnames(newInput[["LFC"]]) <- colnames(Input[[LFC]])
-		}
-		return(newInput)
-	}
+    function(Input, gene.columns, sample.col.name = "samplename") {
+        LFC = "LFC"
+        newInput <- list()
+        class(newInput) <- base::union(class(Input), "gemini.input")
+        
+        dups <-
+            apply(Input$guide.pair.annot[, gene.columns], 1, function(x)
+                any(duplicated(x)))
+        newInput[["counts"]] <-
+            Input$counts[!dups, colSums(!is.na(Input$counts)) != 0]
+        newInput[["replicate.map"]] <- Input$replicate.map %>%
+            dplyr::filter(colSums(!is.na(Input$counts)) != 0) %>%
+            dplyr::select(c("colname", sample.col.name, "TP"))
+        newInput[["guide.pair.annot"]] <- Input$guide.pair.annot %>%
+            dplyr::filter(!dups) %>%
+            dplyr::select(c("rowname", gene.columns))
+        if (LFC %in% names(Input)) {
+            newInput[["LFC"]] <-
+                data.matrix(Input[[LFC]][!dups, unique(newInput$replicate.map$sample[newInput$replicate.map$TP ==
+                                                                                         "LTP"])])
+            colnames(newInput[["LFC"]]) <- colnames(Input[[LFC]])
+        }
+        return(newInput)
+    }

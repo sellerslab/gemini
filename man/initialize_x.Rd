@@ -27,7 +27,7 @@ As such, we have enabled parallelization of most hash steps, but this may still 
 amount of memory consumed.
 }
 \examples{
-Model <- gemini::Model
+data("Model", package = "gemini")
 Model \%<>\% initialize_x()
 
 }

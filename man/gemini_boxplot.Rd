@@ -14,15 +14,19 @@ gemini_boxplot(Model, g, h, nc_gene = NULL, sample,
 
 \item{h}{a character naming another gene to visualize}
 
-\item{nc_gene}{a character naming the gene to use as a negative control, to be paired with each individual g and h. Defaults to \code{Model$nc_gene}.}
+\item{nc_gene}{a character naming the gene to use as a negative control, 
+to be paired with each individual g and h. Defaults to \code{Model$nc_gene}.}
 
 \item{sample}{a character naming the sample to visualize}
 
-\item{show_inference}{a logical indicating whether to show the inferred individual or combined values for each gene/gene pair (default TRUE)}
+\item{show_inference}{a logical indicating whether to show the 
+inferred individual or combined values for each gene/gene pair (default TRUE)}
 
-\item{color_x}{a logical indicating whether to visualize the sample-independent effects for each individual guide or guide pair (default FALSE)}
+\item{color_x}{a logical indicating whether to visualize the 
+sample-independent effects for each individual guide or guide pair (default FALSE)}
 
-\item{identify_guides}{a logical indicating whether to identify guides with unique colors and shapes (default FALSE)}
+\item{identify_guides}{a logical indicating whether to identify 
+guides with unique colors and shapes (default FALSE)}
 }
 \value{
 a ggplot2 object
@@ -35,7 +39,8 @@ Raw LFC data is plotted for each gene combination (`g`-`nc_gene`, `h`-`nc_gene`,
 Horizontal green line segments are plotted over the box plots indicating the individual gene effects or
 the inferred total effect of a particular gene combination. Each guide
 pair can be colored based on the inferred sample independent effects
-\eqn{g_i}, \eqn{h_j}, and \eqn{g_i,h_j}. Additionally, colors and shapes can be used to distinguish unique guides targeting gene g and h, respectively.
+\eqn{g_i}, \eqn{h_j}, and \eqn{g_i,h_j}. Additionally, colors and shapes 
+can be used to distinguish unique guides targeting gene g and h, respectively.
 }
 \examples{
 

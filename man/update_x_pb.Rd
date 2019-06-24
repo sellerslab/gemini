@@ -37,7 +37,7 @@ Parallelization is possible for groups 1 and 2, but only serial updates are poss
 As such, updates for this group will take longer.
 }
 \examples{
-Model <- gemini::Model
+data("Model", package = "gemini")
 Model \%<>\% update_x_pb()
 
 }

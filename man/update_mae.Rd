@@ -18,7 +18,7 @@ An object of class gemini.model
 Calculate mean absolute error across all guide combinations.
 }
 \examples{
-Model <- gemini::Model
+data("Model", package = "gemini")
 Model \%<>\% update_mae()
 
 }

@@ -6,21 +6,22 @@
 #' @param g a character naming a gene to visualize
 #' @param h a character naming another gene to visualize
 #' @param sample a character naming the sample to visualize
-#' @param show_inference a logical indicating whether to show the inferred individual or combined values for each gene/gene pair (default TRUE)
-#' @param color_x a logical indicating whether to visualize the sample-independent effects for each individual guide or guide pair (default FALSE)
-#' @param identify_guides a logical indicating whether to identify guides with unique colors and shapes (default FALSE)
-#' @param nc_gene a character naming the gene to use as a negative control, to be paired with each individual g and h. Defaults to \code{Model$nc_gene}.
+#' @param show_inference a logical indicating whether to show the 
+#' inferred individual or combined values for each gene/gene pair (default TRUE)
+#' @param color_x a logical indicating whether to visualize the 
+#' sample-independent effects for each individual guide or guide pair (default FALSE)
+#' @param identify_guides a logical indicating whether to identify 
+#' guides with unique colors and shapes (default FALSE)
+#' @param nc_gene a character naming the gene to use as a negative control, 
+#' to be paired with each individual g and h. Defaults to \code{Model$nc_gene}.
 #'
 #' @details Raw LFC data is plotted for each gene combination (`g`-`nc_gene`, `h`-`nc_gene`, `g`-`h`) in a standard boxplot.
 #' Horizontal green line segments are plotted over the box plots indicating the individual gene effects or
 #' the inferred total effect of a particular gene combination. Each guide
 #' pair can be colored based on the inferred sample independent effects
-#' \eqn{g_i}, \eqn{h_j}, and \eqn{g_i,h_j}. Additionally, colors and shapes can be used to distinguish unique guides targeting gene g and h, respectively.
+#' \eqn{g_i}, \eqn{h_j}, and \eqn{g_i,h_j}. Additionally, colors and shapes 
+#' can be used to distinguish unique guides targeting gene g and h, respectively.
 #'
-#'
-#'
-#'
-#' @import magrittr
 #' @import ggplot2
 #' @importFrom dplyr mutate
 #' @importFrom grDevices hcl
@@ -73,7 +74,8 @@ gemini_boxplot <- function(Model,
     ginc = Model$hash_s[[paste0(sort(c(g, nc_gene)), collapse = Model$pattern_join)]]
     hjnc = Model$hash_s[[paste0(sort(c(h, nc_gene)), collapse = Model$pattern_join)]]
     
-    # For cases in which the negative control pairs were not included in the inference (i.e. used in the inference process)
+    # For cases in which the negative control pairs were not 
+    # included in the inference (i.e. used in the inference process)
     if (is.null(ginc) | is.null(hjnc)) {
         ginc = Input$guide.pair.annot$rowname[Input$guide.pair.annot[, 2] == g &
                                                   Input$guide.pair.annot[, 3] == nc_gene |
@@ -153,11 +155,11 @@ gemini_boxplot <- function(Model,
         abs_xs = (xs - 1)
         
         # data %<>%
-        # 	mutate(not_NA = apply(xs, 1, function(x)
-        # 		sum(!is.na(x)))) %>%
-        # 	mutate(abs_max = apply(abs_xs, 1, function(x)
-        # 		x[which.max(abs(x))])) %>%
-        # 	mutate(avg_x = apply(xs, 1, mean, na.rm = TRUE))
+        #     mutate(not_NA = apply(xs, 1, function(x)
+        #         sum(!is.na(x)))) %>%
+        #     mutate(abs_max = apply(abs_xs, 1, function(x)
+        #         x[which.max(abs(x))])) %>%
+        #     mutate(avg_x = apply(xs, 1, mean, na.rm = TRUE))
         
         data$vis_x <- data$xx_gihj
         data$vis_x[is.na(data$vis_x)] <- data$x_gi[is.na(data$vis_x)]

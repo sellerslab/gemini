@@ -9,13 +9,13 @@
 #'
 #' @return An object of class gemini.model
 #'
-#' @import pbmcapply
-#' @import parallel
+#' @importFrom pbmcapply pbmclapply
+#' @importFrom parallel mclapply
 #' @export
 #' 
 #' @examples 
 #' 
-#' Model <- gemini::Model
+#' data("Model", package = "gemini")
 #' Model %<>% update_s_pb()
 #'
 update_s_pb <- function(Model, 
@@ -48,18 +48,18 @@ update_s_pb <- function(Model,
     # numerator for pair of genes
     numerator = (Model$xx[gihj]*tau[gihj,])*(LFC[gihj,] - Model$x[gi]*Model$y[g,] - Model$x[hj]*Model$y[h,])
     if (length(gihj)>1){
-    	numerator = mean_s/(sd_s^2) + colSums(as.matrix(numerator), na.rm = TRUE)
+        numerator = mean_s/(sd_s^2) + colSums(as.matrix(numerator), na.rm = TRUE)
     } else{
         # transpose because of R
-    	numerator = mean_s/(sd_s^2) + colSums(as.matrix(t(numerator)), na.rm = TRUE)
+        numerator = mean_s/(sd_s^2) + colSums(as.matrix(t(numerator)), na.rm = TRUE)
     }
 
     # denominator for pair of genes
     if (length(gihj)>1){
-    	denominator = 1/(sd_s^2) + colSums(as.matrix(Model$xx2[gihj]*tau[gihj,]), na.rm = TRUE)
+        denominator = 1/(sd_s^2) + colSums(as.matrix(Model$xx2[gihj]*tau[gihj,]), na.rm = TRUE)
     } else{
         # transpose because of R
-    	denominator = 1/(sd_s^2) + colSums(as.matrix(t(Model$xx2[gihj]*tau[gihj,])), na.rm = TRUE)
+        denominator = 1/(sd_s^2) + colSums(as.matrix(t(Model$xx2[gihj]*tau[gihj,])), na.rm = TRUE)
     }
 
     # updating s and s2
