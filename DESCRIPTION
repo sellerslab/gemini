@@ -1,7 +1,7 @@
 Package: gemini
 Type: Package
 Title: GEMINI: Variational inference approach to infer genetic interactions from pairwise CRISPR screens
-Version: 1.1.0
+Version: 1.2.0
 Authors@R: c(
   person("Mahdi", "Zamanighomi", email = "mzamanig@broadinstitute.org", role = c('aut')),
   person("Sidharth", "Jain", email = "sidharthsjain@gmail.com", role = c('aut', 'cre'))
