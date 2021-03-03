@@ -4,10 +4,17 @@
 \alias{gemini_create_input}
 \title{gemini_create_input}
 \usage{
-gemini_create_input(counts.matrix, sample.replicate.annotation = NULL,
-  guide.annotation = NULL, samplesAreColumns = TRUE,
-  sample.column.name = "samplename", gene.column.names = NULL,
-  ETP.column = 1, LTP.column = NULL, verbose = FALSE)
+gemini_create_input(
+  counts.matrix,
+  sample.replicate.annotation = NULL,
+  guide.annotation = NULL,
+  samplesAreColumns = TRUE,
+  sample.column.name = "samplename",
+  gene.column.names = NULL,
+  ETP.column = 1,
+  LTP.column = NULL,
+  verbose = FALSE
+)
 }
 \arguments{
 \item{counts.matrix}{a matrix of counts with rownames corresponding to features (e.g. guides) and colnames corresponding to samples.}

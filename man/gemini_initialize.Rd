@@ -4,12 +4,24 @@
 \alias{gemini_initialize}
 \title{gemini_initialize}
 \usage{
-gemini_initialize(Input, guide.pair.annot = "guide.pair.annot",
-  replicate.map = "replicate.map", sample.column.name = "samplename",
-  LFC.name = "LFC", nc_gene, CONSTANT = 32, concordance = 1,
-  prior_shape = 0.5, pattern_join = ";", pattern_split = ";",
-  window = NULL, monotonize = FALSE, verbose = FALSE, cores = 1,
-  save = NULL)
+gemini_initialize(
+  Input,
+  guide.pair.annot = "guide.pair.annot",
+  replicate.map = "replicate.map",
+  sample.column.name = "samplename",
+  LFC.name = "LFC",
+  nc_gene,
+  CONSTANT = 32,
+  concordance = 1,
+  prior_shape = 0.5,
+  pattern_join = ";",
+  pattern_split = ";",
+  window = NULL,
+  monotonize = FALSE,
+  verbose = FALSE,
+  cores = 1,
+  save = NULL
+)
 }
 \arguments{
 \item{Input}{an object of class gemini.input}

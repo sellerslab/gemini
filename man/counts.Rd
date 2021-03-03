@@ -4,7 +4,9 @@
 \name{counts}
 \alias{counts}
 \title{Big Papi counts matrix}
-\format{An object of class \code{matrix} with 9216 rows and 16 columns.}
+\format{
+An object of class \code{matrix} (inherits from \code{array}) with 9216 rows and 16 columns.
+}
 \usage{
 counts
 }

@@ -4,7 +4,9 @@
 \name{sample.replicate.annotation}
 \alias{sample.replicate.annotation}
 \title{Big Papi sample and replicate annotations}
-\format{An object of class \code{data.frame} with 16 rows and 3 columns.}
+\format{
+An object of class \code{data.frame} with 16 rows and 3 columns.
+}
 \usage{
 sample.replicate.annotation
 }

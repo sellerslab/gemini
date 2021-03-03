@@ -4,8 +4,14 @@
 \alias{initialize_tau}
 \title{initialize_tau}
 \usage{
-initialize_tau(Model, CONSTANT = 32, prior_shape = 0.5,
-  window = NULL, monotonize = FALSE, verbose = FALSE)
+initialize_tau(
+  Model,
+  CONSTANT = 32,
+  prior_shape = 0.5,
+  window = NULL,
+  monotonize = FALSE,
+  verbose = FALSE
+)
 }
 \arguments{
 \item{Model}{an object of class gemini.model}

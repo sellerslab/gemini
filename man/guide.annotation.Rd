@@ -4,7 +4,9 @@
 \name{guide.annotation}
 \alias{guide.annotation}
 \title{Big Papi guide annotations}
-\format{An object of class \code{data.frame} with 9216 rows and 7 columns.}
+\format{
+An object of class \code{data.frame} with 9216 rows and 7 columns.
+}
 \usage{
 guide.annotation
 }

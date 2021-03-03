@@ -25,7 +25,7 @@
 #' }
 #'
 #' @importFrom dplyr mutate
-#' 
+#'
 #' @examples
 #' data("counts", package = "gemini")
 #' data("sample.replicate.annotation", package = "gemini")
@@ -40,90 +40,139 @@
 #'
 #' @export
 gemini_create_input <-
-    function(counts.matrix,
-             sample.replicate.annotation = NULL,
-             guide.annotation = NULL,
-             samplesAreColumns = TRUE,
-             sample.column.name = "samplename",
-             gene.column.names = NULL,
-             ETP.column = 1,
-             LTP.column = NULL,
-             verbose = FALSE) {
-        
-      # Check ETP/LTP column identification
-      if(is.numeric(ETP.column) & is.null(LTP.column)){
-        LTP.column <- seq(from = 1, to = ncol(counts.matrix))[-ETP.column]
-      }else if(is.character(ETP.column) & is.null(LTP.column)){
-        ETP.column <- which(colnames(counts.matrix) %in% ETP.column)
-        LTP.column <- seq(from = 1, to = ncol(counts.matrix))[-ETP.column]
-      }
-      
-        # Require dimension names for counts matrix if no guide and replicate annotations provided
-        if (is.null(dimnames(counts.matrix)) | is.null(guide.annotation) | is.null(sample.replicate.annotation))
-            stop("No dimnames for counts.matrix - no annotations available.", "")
-      
-      # Require sample.column.name and gene.column.names specification
-      if (is.null(gene.column.names) | is.null(sample.column.name)){
-        stop("Did you provide gene.column.names and/or sample.column.name?")
-      }
-        
-        # transpose matrix
-        if (!samplesAreColumns) {
-          if(verbose) message("Transposing matrix...")
-            # transpose and preserve dimnames
-            dn <- dimnames(counts.matrix)
-            counts.matrix <- t(counts.matrix)
-            dimnames(counts.matrix) <- rev(dn)
-        }
-        
-        # default guide annotations to rownames of counts matrix
-        gannot <-
-            data.frame(rowname = rownames(counts.matrix),
-                       stringsAsFactors = FALSE)
-        
-        # Default sample annotations to column names of counts matrix, ordering by ETP -> LTP
-        sannot <-
-            data.frame(colname = colnames(counts.matrix)[c(ETP.column, LTP.column)],
-                       stringsAsFactors = FALSE, row.names = seq(from = 1, to = length(c(ETP.column, LTP.column)))) %>%
-            dplyr::mutate(TP = c(rep("ETP", length(ETP.column)), rep("LTP", length(LTP.column))))
-        
-        # Merge existing sample annotations with colnames, ensuring formatting and matching names
-        if (!is.null(sample.replicate.annotation) & !is.null(sample.column.name)) {
-            colnames(sample.replicate.annotation)[colnames(sample.replicate.annotation) == sample.column.name] <- "samplename" # Set sample column name to "samplename"
-            if(verbose) message("Merging sample annotations with colnames of counts.matrix...")
-            i = which(apply(sample.replicate.annotation, 2, function(x)
-                all(x %in% sannot[, 1])))
-            if(!length(i) > 0){
-              if(verbose) message("No columns found in sample.replicate.annotation which completely match colnames of counts.matrix...")
-            }
-            sannot <- merge(sannot, sample.replicate.annotation, by.x = 1, by.y = i[1], no.dups = FALSE, all = FALSE, sort = FALSE, suffixes = c("", ".y"))
-        }else{
-            stop("Could not determine samplename.  Please add sample/replicate annotation and specify and sample.column.name.  See ?gemini_create_input.")
-        }
-        
-        # Merge guide annotations with existing rownames, ensuring formatting and matching names
-        if (!is.null(guide.annotation)) {
-          if(verbose) message("Merging guide annotations with rownames()...")
-            i = which(apply(guide.annotation, 2, function(x)
-                all(x %in% gannot[, 1])))
-            if(!length(i) > 0){
-              if(verbose) message("No columns found in guide.annotation which completely match rownames()...")
-            }
-            gannot <- merge(gannot, guide.annotation, by.x = 1, by.y = i, no.dups = FALSE, all = FALSE, sort = FALSE, suffixes = c("", ".y"))
-        }else{
-            stop("Could not determine gene/guide data.  Please add guide annotation and specify and gene.column.names. See ?gemini_create_input.")
-        }
-        
-        # Create new Input object
-        Output <- list(
-            counts = data.matrix(counts.matrix[, c(ETP.column, LTP.column)]),
-            replicate.map = as.data.frame(sannot, optional = TRUE, row.names = seq(from = 1, to = nrow(sannot))),
-            guide.pair.annot = as.data.frame(gannot, optional = TRUE, rownames = seq(from = 1, to = nrow(gannot)))
-        )
-        
-        Output <- gemini_prepare_input(Output, gene.columns = gene.column.names)
-        
-        class(Output) <- union(class(Output), "gemini.input")
-        if(verbose) message("Created gemini input object.")
-        return(Output)
+  function(counts.matrix,
+           sample.replicate.annotation = NULL,
+           guide.annotation = NULL,
+           samplesAreColumns = TRUE,
+           sample.column.name = "samplename",
+           gene.column.names = NULL,
+           ETP.column = 1,
+           LTP.column = NULL,
+           verbose = FALSE) {
+    # Check ETP/LTP column identification
+    if (is.numeric(ETP.column) & is.null(LTP.column)) {
+      LTP.column <- seq(from = 1, to = ncol(counts.matrix))[-ETP.column]
+    } else if (is.character(ETP.column) & is.null(LTP.column)) {
+      ETP.column <- which(colnames(counts.matrix) %in% ETP.column)
+      LTP.column <-
+        seq(from = 1, to = ncol(counts.matrix))[-ETP.column]
     }
+    
+    # Require dimension names for counts matrix if no guide and replicate annotations provided
+    if (is.null(dimnames(counts.matrix)) |
+        is.null(guide.annotation) | is.null(sample.replicate.annotation))
+      stop("No dimnames for counts.matrix - no annotations available.", "")
+    
+    # Require sample.column.name and gene.column.names specification
+    if (is.null(gene.column.names) | is.null(sample.column.name)) {
+      stop("Did you provide gene.column.names and/or sample.column.name?")
+    }
+    
+    # transpose matrix
+    if (!samplesAreColumns) {
+      if (verbose)
+        message("Transposing matrix...")
+      # transpose and preserve dimnames
+      dn <- dimnames(counts.matrix)
+      counts.matrix <- t(counts.matrix)
+      dimnames(counts.matrix) <- rev(dn)
+    }
+    
+    # default guide annotations to rownames of counts matrix
+    gannot <-
+      data.frame(rowname = rownames(counts.matrix),
+                 stringsAsFactors = FALSE)
+    
+    # Default sample annotations to column names of counts matrix, ordering by ETP -> LTP
+    sannot <-
+      data.frame(
+        colname = colnames(counts.matrix)[c(ETP.column, LTP.column)],
+        stringsAsFactors = FALSE,
+        row.names = seq(from = 1, to = length(c(
+          ETP.column, LTP.column
+        )))
+      ) %>%
+      dplyr::mutate(TP = c(rep("ETP", length(ETP.column)), rep("LTP", length(LTP.column))))
+    
+    # Merge existing sample annotations with colnames, ensuring formatting and matching names
+    if (!is.null(sample.replicate.annotation) &
+        !is.null(sample.column.name)) {
+      colnames(sample.replicate.annotation)[colnames(sample.replicate.annotation) == sample.column.name] <-
+        "samplename" # Set sample column name to "samplename"
+      if (verbose)
+        message("Merging sample annotations with colnames of counts.matrix...")
+      i = which(apply(sample.replicate.annotation, 2, function(x)
+        all(x %in% sannot[, 1])))
+      if (!length(i) > 0) {
+        if (verbose)
+          message(
+            "No columns found in sample.replicate.annotation which completely match colnames of counts.matrix..."
+          )
+      }
+      sannot <-
+        merge(
+          sannot,
+          sample.replicate.annotation,
+          by.x = 1,
+          by.y = i[1],
+          no.dups = FALSE,
+          all = FALSE,
+          sort = FALSE,
+          suffixes = c("", ".y")
+        )
+    } else{
+      stop(
+        "Could not determine samplename.  Please add sample/replicate annotation and specify and sample.column.name.  See ?gemini_create_input."
+      )
+    }
+    
+    # Merge guide annotations with existing rownames, ensuring formatting and matching names
+    if (!is.null(guide.annotation)) {
+      if (verbose)
+        message("Merging guide annotations with rownames()...")
+      i = which(apply(guide.annotation, 2, function(x)
+        all(x %in% gannot[, 1])))
+      if (!length(i) > 0) {
+        if (verbose)
+          message("No columns found in guide.annotation which completely match rownames()...")
+      }
+      gannot <-
+        merge(
+          gannot,
+          guide.annotation,
+          by.x = 1,
+          by.y = i,
+          no.dups = FALSE,
+          all = FALSE,
+          sort = FALSE,
+          suffixes = c("", ".y")
+        )
+    } else{
+      stop(
+        "Could not determine gene/guide data.  Please add guide annotation and specify and gene.column.names. See ?gemini_create_input."
+      )
+    }
+    
+    # Create new Input object
+    Output <- list(
+      counts = data.matrix(counts.matrix[, c(ETP.column, LTP.column)]),
+      replicate.map = as.data.frame(
+        sannot,
+        optional = TRUE,
+        row.names = seq(from = 1, to = nrow(sannot))
+      ),
+      guide.pair.annot = as.data.frame(
+        gannot,
+        optional = TRUE,
+        rownames = seq(from = 1, to = nrow(gannot))
+      )
+    )
+    
+    Output <-
+      gemini_prepare_input(Output, gene.columns = gene.column.names)
+    
+    class(Output) <- union(class(Output), "gemini.input")
+    if (verbose)
+      message("Created gemini input object.")
+    return(Output)
+  }

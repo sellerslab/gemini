@@ -4,8 +4,16 @@
 \alias{gemini_boxplot}
 \title{gemini_boxplot}
 \usage{
-gemini_boxplot(Model, g, h, nc_gene = NULL, sample,
-  show_inference = TRUE, color_x = FALSE, identify_guides = FALSE)
+gemini_boxplot(
+  Model,
+  g,
+  h,
+  nc_gene = NULL,
+  sample,
+  show_inference = TRUE,
+  color_x = FALSE,
+  identify_guides = FALSE
+)
 }
 \arguments{
 \item{Model}{a gemini.model object}

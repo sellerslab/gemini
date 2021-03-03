@@ -4,8 +4,7 @@
 \alias{update_s_pb}
 \title{update_s}
 \usage{
-update_s_pb(Model, mean_s = 0, sd_s = 10, cores = 1,
-  verbose = FALSE)
+update_s_pb(Model, mean_s = 0, sd_s = 10, cores = 1, verbose = FALSE)
 }
 \arguments{
 \item{Model}{a Model object of class gemini.model}

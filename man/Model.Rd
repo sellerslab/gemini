@@ -4,7 +4,9 @@
 \name{Model}
 \alias{Model}
 \title{Model object from Big Papi}
-\format{An object of class \code{list} (inherits from \code{gemini.model}) of length 24.}
+\format{
+An object of class \code{list} (inherits from \code{gemini.model}) of length 24.
+}
 \usage{
 Model
 }

@@ -4,8 +4,15 @@
 \alias{update_x_pb}
 \title{update_x_p}
 \usage{
-update_x_pb(Model, mean_x = 1, sd_x = 1, mean_xx = 1, sd_xx = 1,
-  cores = 1, verbose = FALSE)
+update_x_pb(
+  Model,
+  mean_x = 1,
+  sd_x = 1,
+  mean_xx = 1,
+  sd_xx = 1,
+  cores = 1,
+  verbose = FALSE
+)
 }
 \arguments{
 \item{Model}{a Model object of class gemini.model}

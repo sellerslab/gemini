@@ -4,8 +4,13 @@
 \alias{gemini_score}
 \title{Scoring Combination Effect}
 \usage{
-gemini_score(Model, pc_gene = NA, pc_threshold = NULL,
-  pc_weight = 0.5, nc_pairs = NA)
+gemini_score(
+  Model,
+  pc_gene = NA,
+  pc_threshold = NULL,
+  pc_weight = 0.5,
+  nc_pairs = NA
+)
 }
 \arguments{
 \item{Model}{an object of class gemini.model}

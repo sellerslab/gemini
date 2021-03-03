@@ -4,10 +4,23 @@
 \alias{gemini_inference}
 \title{gemini_inference}
 \usage{
-gemini_inference(Model, n_iterations = 20, mean_x = 1, sd_x = 1,
-  mean_xx = 1, sd_xx = 1, mean_y = 0, sd_y = 10, mean_s = 0,
-  sd_s = 10, threshold = 0.001, cores = 1, force_results = FALSE,
-  verbose = FALSE, save_iterations = FALSE)
+gemini_inference(
+  Model,
+  n_iterations = 20,
+  mean_x = 1,
+  sd_x = 1,
+  mean_xx = 1,
+  sd_xx = 1,
+  mean_y = 0,
+  sd_y = 10,
+  mean_s = 0,
+  sd_s = 10,
+  threshold = 0.001,
+  cores = 1,
+  force_results = FALSE,
+  verbose = FALSE,
+  save_iterations = FALSE
+)
 }
 \arguments{
 \item{Model}{an object of class gemini.model}

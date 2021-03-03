@@ -4,7 +4,9 @@
 \name{Input}
 \alias{Input}
 \title{Input object from Big Papi}
-\format{An object of class \code{list} (inherits from \code{gemini.input}, \code{gemini.input}) of length 6.}
+\format{
+An object of class \code{list} (inherits from \code{gemini.input}, \code{gemini.input}) of length 6.
+}
 \usage{
 Input
 }

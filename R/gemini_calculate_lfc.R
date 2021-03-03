@@ -115,6 +115,7 @@ gemini_calculate_lfc <- function(Input,
         as.data.frame(optional = TRUE, stringsAsFactors = FALSE) %>%
         magrittr::set_rownames(Input$guide.pair.annot[, 1])
     
+    # Consolidate LFC to sample level
     unique.to.sample <-
         names(which(
             apply(Input$replicate.map, 2, function(x)
@@ -122,10 +123,10 @@ gemini_calculate_lfc <- function(Input,
         ))
     Input$sample.annot <- Input$replicate.map %>%
         dplyr::filter(.$`TP` == "LTP") %>%
-        dplyr::select(sample.column.name, 'TP', unique.to.sample) %>%
+        dplyr::select(dplyr::all_of(c(sample.column.name, 'TP', unique.to.sample))) %>%
         unique() %>%
+        magrittr::set_rownames(seq(from = 1, to = nrow(.))) %>%
         dplyr::mutate(rowname = colnames(LTP_df))
-    
     
     Input[["LFC"]] <- LTP_df %>%
         dplyr::select(unique(Input$replicate.map[[sample.column.name]][Input$replicate.map$TP != "ETP"])) %>%
