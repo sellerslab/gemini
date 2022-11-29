@@ -34,5 +34,4 @@ See the vignette for usage instructions:
 
 ``` r
 vignette("gemini-quickstart", package = "gemini")
-#> Warning: vignette 'gemini-quickstart' not found
 ```
